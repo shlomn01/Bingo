@@ -1,2077 +1,915 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>בינגו כיתתי</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&family=Secular+One&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --sun: #F2A541;
-            --sun-light: #F7C97E;
-            --coral: #E8694A;
-            --coral-deep: #C74D34;
-            --teal: #3AAFA9;
-            --teal-deep: #2B8A85;
-            --cream: #FFF8F0;
-            --cream-dark: #F5EDE0;
-            --warm-white: #FFFDF9;
-            --charcoal: #2D3436;
-            --charcoal-light: #4A5056;
-            --sage: #A8C5A0;
-            --sage-deep: #7BA370;
-            --lavender: #C3AED6;
-            --sky: #87CEEB;
-            --sky-deep: #5DADE2;
-            --rose: #E8A0BF;
-            --paper: #FDF6EC;
-            --ink: #3D3229;
-            --ink-light: #6B5D50;
-            --shadow-warm: 0 8px 30px rgba(45,52,54,0.12);
-            --shadow-float: 0 12px 40px rgba(45,52,54,0.15);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Heebo', sans-serif;
-            background: var(--cream);
-            color: var(--ink);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* ===== PAINTERLY BACKGROUND ===== */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(ellipse 80% 50% at 10% 20%, rgba(242,165,65,0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 70% at 85% 70%, rgba(58,175,169,0.10) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 40% at 50% 90%, rgba(232,105,74,0.08) 0%, transparent 60%),
-                radial-gradient(ellipse 40% 30% at 20% 60%, rgba(168,197,160,0.12) 0%, transparent 60%);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Paint texture overlay */
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-
-        .container {
-            max-width: 880px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            text-align: center;
-            padding: 25px 0 15px;
-            position: relative;
-        }
-
-        .header-illustration {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto 10px;
-            display: block;
-        }
-
-        .header h1 {
-            font-family: 'Secular One', sans-serif;
-            font-size: 3rem;
-            color: var(--coral);
-            text-shadow: 2px 2px 0px rgba(242,165,65,0.3);
-            position: relative;
-            display: inline-block;
-        }
-
-        .header p {
-            color: var(--ink-light);
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        /* Decorative paint blobs around header */
-        .paint-blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(1px);
-            opacity: 0.5;
-            z-index: -1;
-        }
-
-        /* ===== SCREENS ===== */
-        .screen { display: none; }
-        .screen.active {
-            display: block;
-            animation: slideUp 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== HOME SCREEN ===== */
-        .home-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            max-width: 520px;
-            margin: 30px auto;
-        }
-
-        .home-btn {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 24px 28px;
-            border-radius: 24px;
-            border: 3px solid transparent;
-            background: var(--warm-white);
-            cursor: pointer;
-            transition: all 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-            text-align: right;
-            text-decoration: none;
-            color: var(--ink);
-            box-shadow: var(--shadow-warm);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .home-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 22px;
-            opacity: 0;
-            transition: opacity 0.35s;
-        }
-
-        .home-btn:nth-child(1)::before { background: linear-gradient(135deg, rgba(232,105,74,0.06), rgba(242,165,65,0.06)); }
-        .home-btn:nth-child(2)::before { background: linear-gradient(135deg, rgba(58,175,169,0.06), rgba(135,206,235,0.06)); }
-        .home-btn:nth-child(3)::before { background: linear-gradient(135deg, rgba(168,197,160,0.06), rgba(195,174,214,0.06)); }
-
-        .home-btn:hover::before { opacity: 1; }
-
-        .home-btn:hover {
-            transform: translateY(-4px) scale(1.01);
-            box-shadow: var(--shadow-float);
-            border-color: var(--cream-dark);
-        }
-
-        .home-btn .icon-wrap {
-            width: 68px;
-            height: 68px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        .home-btn:nth-child(1) .icon-wrap { background: linear-gradient(135deg, var(--coral), var(--sun)); }
-        .home-btn:nth-child(2) .icon-wrap { background: linear-gradient(135deg, var(--teal), var(--sky)); }
-        .home-btn:nth-child(3) .icon-wrap { background: linear-gradient(135deg, var(--sage), var(--lavender)); }
-
-        .home-btn .icon-wrap svg {
-            width: 36px;
-            height: 36px;
-            fill: white;
-        }
-
-        .home-btn h3 {
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin-bottom: 3px;
-            color: var(--charcoal);
-        }
-
-        .home-btn p {
-            color: var(--ink-light);
-            font-size: 0.9rem;
-        }
-
-        /* ===== CARD ===== */
-        .card {
-            background: var(--warm-white);
-            border: 2px solid rgba(0,0,0,0.04);
-            border-radius: 28px;
-            padding: 28px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-warm);
-            position: relative;
-        }
-
-        .card h2 {
-            font-size: 1.35rem;
-            font-weight: 800;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--charcoal);
-        }
-
-        .card-icon-svg {
-            width: 32px;
-            height: 32px;
-            flex-shrink: 0;
-        }
-
-        /* ===== FORMS ===== */
-        label {
-            display: block;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--ink-light);
-            font-size: 0.92rem;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 14px 18px;
-            border-radius: 16px;
-            border: 2px solid var(--cream-dark);
-            background: var(--paper);
-            color: var(--ink);
-            font-family: 'Heebo', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s;
-            direction: rtl;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--teal);
-            box-shadow: 0 0 0 4px rgba(58,175,169,0.12);
-            background: white;
-        }
-
-        textarea { resize: vertical; min-height: 100px; }
-
-        .form-group { margin-bottom: 18px; }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--ink-light);
-        }
-
-        .checkbox-label input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
-            accent-color: var(--teal);
-            cursor: pointer;
-        }
-
-        /* ===== BUTTONS ===== */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 14px 30px;
-            border-radius: 18px;
-            border: none;
-            font-family: 'Heebo', sans-serif;
-            font-size: 1rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
-            position: relative;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--coral), var(--sun));
-            color: white;
-            box-shadow: 0 6px 20px rgba(232,105,74,0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(232,105,74,0.4);
-        }
-
-        .btn-teal {
-            background: linear-gradient(135deg, var(--teal), var(--teal-deep));
-            color: white;
-            box-shadow: 0 6px 20px rgba(58,175,169,0.3);
-        }
-
-        .btn-teal:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(58,175,169,0.4);
-        }
-
-        .btn-secondary {
-            background: var(--cream);
-            color: var(--ink);
-            border: 2px solid var(--cream-dark);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--teal);
-            background: rgba(58,175,169,0.05);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--coral-deep), var(--coral));
-            color: white;
-        }
-
-        .btn-sm { padding: 10px 20px; font-size: 0.88rem; border-radius: 14px; }
-        .btn-block { width: 100%; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-
-        /* ===== STATEMENTS LIST ===== */
-        .statements-list {
-            list-style: none;
-            margin: 15px 0;
-            max-height: 300px;
-            overflow-y: auto;
-            padding-left: 5px;
-        }
-
-        .statements-list::-webkit-scrollbar { width: 6px; }
-        .statements-list::-webkit-scrollbar-thumb { background: var(--cream-dark); border-radius: 3px; }
-
-        .statement-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 18px;
-            background: var(--paper);
-            border-radius: 16px;
-            margin-bottom: 8px;
-            border: 2px solid var(--cream-dark);
-            transition: all 0.25s;
-        }
-
-        .statement-item:hover { border-color: var(--sun-light); }
-
-        .statement-item span { flex: 1; font-size: 0.95rem; font-weight: 500; }
-
-        .statement-item .remove-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 10px;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-        }
-
-        .statement-item .remove-btn svg { width: 18px; height: 18px; }
-        .statement-item .remove-btn:hover { background: rgba(232,105,74,0.1); }
-
-        .statement-count {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 16px;
-            background: var(--paper);
-            border-radius: 20px;
-            font-size: 0.88rem;
-            font-weight: 700;
-            color: var(--ink-light);
-            border: 2px solid var(--cream-dark);
-        }
-
-        .statement-count.enough { color: var(--teal-deep); border-color: var(--teal); background: rgba(58,175,169,0.06); }
-
-        /* ===== SUGGESTIONS ===== */
-        .suggestions-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .suggestion-chip {
-            padding: 9px 18px;
-            border-radius: 50px;
-            border: 2px solid var(--cream-dark);
-            background: var(--paper);
-            color: var(--ink);
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-family: 'Heebo', sans-serif;
-            font-weight: 600;
-            transition: all 0.25s;
-        }
-
-        .suggestion-chip:hover {
-            border-color: var(--sun);
-            background: rgba(242,165,65,0.08);
-            transform: translateY(-1px);
-        }
-
-        .suggestion-chip.added {
-            border-color: var(--sage);
-            color: var(--sage-deep);
-            opacity: 0.6;
-            cursor: default;
-        }
-
-        /* ===== TABS ===== */
-        .tabs {
-            display: flex;
-            gap: 4px;
-            background: var(--paper);
-            border-radius: 18px;
-            padding: 4px;
-            margin-bottom: 18px;
-            border: 2px solid var(--cream-dark);
-            overflow-x: auto;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 11px 8px;
-            text-align: center;
-            border-radius: 14px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-            background: none;
-            border: none;
-            color: var(--ink-light);
-            font-family: 'Heebo', sans-serif;
-            white-space: nowrap;
-        }
-
-        .tab.active {
-            background: linear-gradient(135deg, var(--teal), var(--teal-deep));
-            color: white;
-            box-shadow: 0 4px 12px rgba(58,175,169,0.25);
-        }
-
-        /* ===== PRIZES ===== */
-        .prize-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 18px;
-            background: var(--paper);
-            border-radius: 20px;
-            margin-bottom: 12px;
-            border: 2px solid var(--cream-dark);
-            transition: border-color 0.3s;
-        }
-
-        .prize-item:hover { border-color: var(--sun-light); }
-
-        .prize-medallion {
-            width: 52px;
-            height: 52px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .prize-medallion svg { width: 28px; height: 28px; }
-
-        .prize-medallion.bronze { background: linear-gradient(135deg, #CD9B6D, #E8B88A); }
-        .prize-medallion.silver { background: linear-gradient(135deg, #A8B5C5, #CBD5E0); }
-        .prize-medallion.gold { background: linear-gradient(135deg, var(--sun), var(--sun-light)); }
-        .prize-medallion.diamond { background: linear-gradient(135deg, var(--coral), var(--sun)); }
-
-        .prize-info { flex: 1; }
-        .prize-info h4 { font-size: 1rem; font-weight: 800; margin-bottom: 2px; color: var(--charcoal); }
-        .prize-info p { color: var(--ink-light); font-size: 0.85rem; margin-bottom: 8px; }
-        .prize-input { width: 100% !important; }
-
-        /* ===== GAME CODE BOX ===== */
-        .game-code-box { text-align: center; padding: 35px; }
-
-        .game-code {
-            font-family: 'Secular One', sans-serif;
-            font-size: 3.2rem;
-            letter-spacing: 10px;
-            color: var(--coral);
-            text-shadow: 2px 2px 0px rgba(242,165,65,0.3);
-            margin: 15px 0;
-        }
-
-        .game-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 18px;
-            background: var(--paper);
-            border-radius: 16px;
-            border: 2px solid var(--cream-dark);
-            margin: 15px auto;
-            max-width: 500px;
-            direction: ltr;
-        }
-
-        .game-link input {
-            flex: 1;
-            background: none;
-            border: none;
-            color: var(--ink);
-            font-size: 0.88rem;
-            direction: ltr;
-        }
-
-        .game-link input:focus { outline: none; box-shadow: none; }
-
-        .copy-btn {
-            background: linear-gradient(135deg, var(--teal), var(--teal-deep));
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-family: 'Heebo', sans-serif;
-            font-weight: 700;
-            font-size: 0.88rem;
-            transition: transform 0.2s;
-        }
-
-        .copy-btn:hover { transform: scale(1.05); }
-
-        /* ===== STUDENT JOIN ===== */
-        .join-form {
-            max-width: 460px;
-            margin: 25px auto;
-        }
-
-        .join-form input { text-align: center; }
-
-        .code-input {
-            font-family: 'Secular One', sans-serif !important;
-            font-size: 1.8rem !important;
-            letter-spacing: 6px !important;
-            text-transform: uppercase;
-            color: var(--coral) !important;
-        }
-
-        .avatar-selector {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin: 15px 0;
-        }
-
-        .avatar-option {
-            width: 56px;
-            height: 56px;
-            border-radius: 18px;
-            border: 3px solid var(--cream-dark);
-            cursor: pointer;
-            transition: all 0.25s;
-            background: var(--paper);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .avatar-option svg { width: 38px; height: 38px; }
-
-        .avatar-option:hover { border-color: var(--sun-light); transform: scale(1.08); }
-
-        .avatar-option.selected {
-            border-color: var(--teal);
-            background: rgba(58,175,169,0.08);
-            transform: scale(1.12);
-            box-shadow: 0 4px 15px rgba(58,175,169,0.2);
-        }
-
-        /* ===== BINGO BOARD ===== */
-        .board-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .player-info { display: flex; align-items: center; gap: 14px; }
-
-        .player-avatar-wrap {
-            width: 52px;
-            height: 52px;
-            border-radius: 18px;
-            background: linear-gradient(135deg, var(--sun-light), var(--sun));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(242,165,65,0.25);
-        }
-
-        .player-avatar-wrap svg { width: 34px; height: 34px; }
-
-        .player-name { font-size: 1.25rem; font-weight: 800; color: var(--charcoal); }
-
-        .timer-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: var(--warm-white);
-            border-radius: 18px;
-            font-size: 0.92rem;
-            font-weight: 700;
-            border: 2px solid var(--cream-dark);
-            box-shadow: var(--shadow-warm);
-        }
-
-        .timer-badge svg { width: 20px; height: 20px; }
-
-        /* ===== THE BINGO GRID ===== */
-        .bingo-grid {
-            display: grid;
-            gap: 10px;
-            margin: 20px auto;
-            max-width: 620px;
-        }
-
-        .bingo-cell {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 8px 6px;
-            border-radius: 22px;
-            border: 3px solid var(--cream-dark);
-            background: var(--warm-white);
-            cursor: pointer;
-            font-size: 0.78rem;
-            font-weight: 600;
-            line-height: 1.35;
-            transition: all 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-            user-select: none;
-            word-break: break-word;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-            color: var(--charcoal);
-        }
-
-        .bingo-cell::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 19px;
-            opacity: 0;
-            transition: opacity 0.35s;
-        }
-
-        .bingo-cell:hover:not(.marked):not(.free) {
-            border-color: var(--sun-light);
-            transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 8px 20px rgba(242,165,65,0.15);
-        }
-
-        .bingo-cell.marked {
-            background: linear-gradient(135deg, var(--teal), var(--teal-deep));
-            border-color: var(--teal-deep);
-            color: white;
-            font-weight: 700;
-            box-shadow: 0 6px 18px rgba(58,175,169,0.3);
-            animation: cellPop 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
-        }
-
-        .bingo-cell.marked::after {
-            content: '';
-            position: absolute;
-            top: 6px;
-            left: 6px;
-            width: 18px;
-            height: 18px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat;
-            opacity: 0.7;
-        }
-
-        .bingo-cell.free {
-            background: linear-gradient(135deg, var(--sun), var(--coral));
-            border-color: var(--coral);
-            color: white;
-            font-weight: 800;
-            font-size: 0.85rem;
-            cursor: default;
-            box-shadow: 0 6px 18px rgba(232,105,74,0.25);
-        }
-
-        .bingo-cell.win-line {
-            animation: winGlow 1.2s ease infinite;
-            border-color: var(--sun) !important;
-        }
-
-        @keyframes cellPop {
-            0% { transform: scale(0.88) rotate(-2deg); }
-            50% { transform: scale(1.08) rotate(1deg); }
-            100% { transform: scale(1) rotate(0deg); }
-        }
-
-        @keyframes winGlow {
-            0%, 100% { box-shadow: 0 6px 18px rgba(58,175,169,0.3); }
-            50% { box-shadow: 0 6px 30px rgba(242,165,65,0.5), 0 0 15px rgba(58,175,169,0.2); }
-        }
-
-        /* ===== ACHIEVEMENTS ===== */
-        .achievements-bar {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 18px 0;
-            justify-content: center;
-        }
-
-        .achievement {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border-radius: 18px;
-            border: 2px solid var(--cream-dark);
-            background: var(--warm-white);
-            font-size: 0.85rem;
-            font-weight: 700;
-            opacity: 0.35;
-            transition: all 0.5s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-
-        .achievement .ach-svg { width: 24px; height: 24px; flex-shrink: 0; }
-
-        .achievement.unlocked {
-            opacity: 1;
-            border-color: var(--sun);
-            background: rgba(242,165,65,0.08);
-            animation: achievePop 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
-        }
-
-        @keyframes achievePop {
-            0% { transform: scale(0.7); opacity: 0; }
-            60% { transform: scale(1.12); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* ===== PROGRESS ===== */
-        .progress-section { margin: 18px 0; text-align: center; }
-
-        .progress-bar-bg {
-            height: 14px;
-            background: var(--cream-dark);
-            border-radius: 7px;
-            overflow: hidden;
-            margin: 8px 0;
-            border: 2px solid rgba(0,0,0,0.04);
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--teal), var(--sun));
-            border-radius: 7px;
-            transition: width 0.5s ease;
-            position: relative;
-        }
-
-        .progress-bar-fill::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 60%);
-            border-radius: 7px;
-        }
-
-        .progress-text { font-size: 0.85rem; color: var(--ink-light); font-weight: 600; }
-
-        /* ===== MODAL ===== */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(45,52,54,0.6);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-overlay.show { display: flex; }
-
-        .modal {
-            background: var(--warm-white);
-            border-radius: 32px;
-            padding: 44px 36px;
-            text-align: center;
-            max-width: 440px;
-            width: 100%;
-            border: 3px solid var(--sun-light);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-            animation: modalBounce 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
-        }
-
-        @keyframes modalBounce {
-            0% { transform: scale(0.6) rotate(-3deg); opacity: 0; }
-            60% { transform: scale(1.05) rotate(1deg); }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-
-        .modal .trophy-svg {
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 15px;
-            animation: trophyFloat 2s ease-in-out infinite;
-        }
-
-        @keyframes trophyFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(3deg); }
-        }
-
-        .modal h2 {
-            font-family: 'Secular One', sans-serif;
-            font-size: 1.8rem;
-            color: var(--coral);
-            margin-bottom: 8px;
-        }
-
-        .modal p { color: var(--ink-light); margin-bottom: 8px; }
-
-        .prize-text {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--charcoal);
-            margin: 18px 0;
-            padding: 16px;
-            background: linear-gradient(135deg, rgba(242,165,65,0.1), rgba(232,105,74,0.08));
-            border-radius: 18px;
-            border: 2px solid var(--sun-light);
-        }
-
-        /* ===== DASHBOARD ===== */
-        .dashboard-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        .stat-card {
-            background: var(--paper);
-            border: 2px solid var(--cream-dark);
-            border-radius: 20px;
-            padding: 20px 16px;
-            text-align: center;
-        }
-
-        .stat-card .stat-num {
-            font-family: 'Secular One', sans-serif;
-            font-size: 2.2rem;
-            color: var(--coral);
-        }
-
-        .stat-card .stat-label {
-            font-size: 0.82rem;
-            color: var(--ink-light);
-            margin-top: 4px;
-            font-weight: 600;
-        }
-
-        .players-list { list-style: none; max-height: 300px; overflow-y: auto; }
-
-        .player-list-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
-            background: var(--paper);
-            border-radius: 18px;
-            margin-bottom: 8px;
-            border: 2px solid var(--cream-dark);
-        }
-
-        .pl-info { display: flex; align-items: center; gap: 12px; }
-        .pl-info .pl-av { width: 36px; height: 36px; }
-        .pl-progress { font-size: 0.85rem; color: var(--ink-light); }
-
-        .badge {
-            padding: 5px 14px;
-            border-radius: 10px;
-            font-size: 0.78rem;
-            font-weight: 800;
-        }
-
-        .badge-bingo { background: rgba(242,165,65,0.15); color: var(--sun); }
-        .badge-row { background: rgba(58,175,169,0.12); color: var(--teal-deep); }
-
-        /* ===== BACK ===== */
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--ink-light);
-            text-decoration: none;
-            cursor: pointer;
-            font-size: 0.92rem;
-            margin-bottom: 15px;
-            padding: 6px 0;
-            transition: color 0.2s;
-            background: none;
-            border: none;
-            font-family: 'Heebo', sans-serif;
-            font-weight: 600;
-        }
-
-        .back-btn:hover { color: var(--charcoal); }
-
-        /* ===== CONFETTI ===== */
-        .confetti-container {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 999;
-            overflow: hidden;
-        }
-
-        .confetti-piece {
-            position: absolute;
-            top: -20px;
-            animation: confettiFall linear forwards;
-        }
-
-        @keyframes confettiFall {
-            0% { transform: rotate(0deg) scale(1); }
-            100% { top: 110vh; transform: rotate(720deg) scale(0.5); }
-        }
-
-        /* ===== GAME ENDED ===== */
-        .game-ended-banner {
-            background: rgba(232,105,74,0.08);
-            border: 2px solid var(--coral);
-            border-radius: 20px;
-            padding: 16px 22px;
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--coral);
-            font-weight: 700;
-        }
-
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--charcoal);
-            color: white;
-            padding: 14px 30px;
-            border-radius: 18px;
-            font-weight: 700;
-            z-index: 2000;
-            transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-        }
-
-        .toast.show { transform: translateX(-50%) translateY(0); }
-
-        /* ===== INLINE ADD ===== */
-        .inline-add { display: flex; gap: 8px; }
-        .inline-add input { flex: 1; }
-
-        /* ===== DECORATIVE ILLUSTRATIONS ===== */
-        .deco-wrap {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            margin: -10px 0 10px;
-        }
-
-        .deco-scene { width: 100%; max-width: 420px; }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 600px) {
-            .container { padding: 10px; }
-            .header h1 { font-size: 2.2rem; }
-            .card { padding: 20px; border-radius: 22px; }
-            .form-row { grid-template-columns: 1fr; }
-            .bingo-grid { gap: 6px; }
-            .bingo-cell { font-size: 0.62rem; padding: 5px 3px; border-radius: 14px; border-width: 2px; }
-            .bingo-cell.marked::after { width: 12px; height: 12px; top: 3px; left: 3px; }
-            .bingo-cell.free { font-size: 0.72rem; }
-            .home-btn { padding: 18px 20px; border-radius: 20px; }
-            .home-btn .icon-wrap { width: 54px; height: 54px; border-radius: 16px; }
-            .achievement { padding: 8px 12px; font-size: 0.78rem; }
-            .modal { padding: 28px 20px; border-radius: 26px; }
-            .modal .trophy-svg { width: 70px; height: 70px; }
-            .tabs { flex-wrap: nowrap; }
-            .tab { font-size: 0.78rem; padding: 9px 5px; }
-        }
-
-        .mt-10 { margin-top: 10px; }
-        .mt-20 { margin-top: 20px; }
-        .mb-10 { margin-bottom: 10px; }
-        .text-center { text-align: center; }
-        .text-muted { color: var(--ink-light); }
-        .flex-between { display: flex; align-items: center; justify-content: space-between; }
-        .hidden { display: none !important; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>בינגו כיתתי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root {
+    --sun:#F2A541;--sun-light:#F7C97E;--coral:#E8694A;--coral-deep:#C74D34;
+    --teal:#3AAFA9;--teal-deep:#2B8A85;--cream:#FFF8F0;--cream-dark:#F5EDE0;
+    --warm-white:#FFFDF9;--charcoal:#2D3436;--sage:#A8C5A0;--sage-deep:#7BA370;
+    --lavender:#C3AED6;--sky:#87CEEB;--sky-deep:#5DADE2;--rose:#E8A0BF;
+    --paper:#FDF6EC;--ink:#3D3229;--ink-light:#6B5D50;
+    --shadow-warm:0 8px 30px rgba(45,52,54,0.10);
+    --shadow-float:0 14px 44px rgba(45,52,54,0.13);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:'Heebo',sans-serif;background:var(--cream);color:var(--ink);
+    min-height:100vh;overflow-x:hidden;position:relative;
+}
+
+/* ===== RICH BACKGROUND ===== */
+body::before{
+    content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
+    background:
+        radial-gradient(ellipse 80% 50% at 8% 15%,rgba(242,165,65,0.13) 0%,transparent 55%),
+        radial-gradient(ellipse 60% 70% at 90% 75%,rgba(58,175,169,0.11) 0%,transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 95%,rgba(232,105,74,0.09) 0%,transparent 55%),
+        radial-gradient(ellipse 40% 35% at 15% 65%,rgba(168,197,160,0.13) 0%,transparent 55%),
+        radial-gradient(ellipse 35% 30% at 75% 20%,rgba(195,174,214,0.10) 0%,transparent 55%);
+}
+
+/* Notebook lines pattern */
+body::after{
+    content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.03;
+    background-image:repeating-linear-gradient(0deg,transparent,transparent 31px,#BBA58A 31px,#BBA58A 32px);
+    background-size:100% 32px;
+}
+
+/* ===== FLOATING DECORATIONS ===== */
+.floating-deco{position:fixed;z-index:0;pointer-events:none;opacity:0.35;}
+
+.float-star{animation:floatStar 6s ease-in-out infinite;}
+.float-circle{animation:floatCircle 8s ease-in-out infinite;}
+.float-heart{animation:floatHeart 7s ease-in-out infinite;}
+.float-splash{animation:floatSplash 10s ease-in-out infinite;}
+
+@keyframes floatStar{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-18px) rotate(15deg)}}
+@keyframes floatCircle{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.08)}}
+@keyframes floatHeart{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-15px) rotate(5deg)}}
+@keyframes floatSplash{0%,100%{transform:translateY(0) rotate(0deg) scale(1)}50%{transform:translateY(-10px) rotate(8deg) scale(1.05)}}
+
+.container{max-width:880px;margin:0 auto;padding:20px;position:relative;z-index:1;}
+
+/* ===== HEADER ===== */
+.header{text-align:center;padding:15px 0 5px;position:relative;}
+.header h1{
+    font-family:'Secular One',sans-serif;font-size:3.2rem;color:var(--coral);
+    text-shadow:3px 3px 0px rgba(242,165,65,0.3),-1px -1px 0px rgba(58,175,169,0.15);
+    position:relative;display:inline-block;
+}
+/* Decorative underline brush */
+.header h1::after{
+    content:'';position:absolute;bottom:-4px;right:-10%;width:120%;height:12px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12'%3E%3Cpath d='M2 8Q50 2 100 7Q150 12 198 5' stroke='%23F2A541' stroke-width='4' fill='none' stroke-linecap='round' opacity='0.5'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.header p{color:var(--ink-light);font-size:1.05rem;font-weight:500;margin-top:6px;}
+
+/* ===== BUNTING / BANNER ===== */
+.bunting{
+    display:flex;justify-content:center;gap:4px;margin:8px 0 0;
+    direction:ltr;
+}
+.bunting-flag{
+    width:28px;height:34px;clip-path:polygon(0 0,100% 0,50% 100%);
+    display:inline-block;animation:buntingSwing 3s ease-in-out infinite;
+    transform-origin:top center;
+}
+.bunting-flag:nth-child(odd){animation-delay:-1.5s;}
+@keyframes buntingSwing{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+
+/* ===== DECO SCENE ===== */
+.deco-wrap{position:relative;display:flex;justify-content:center;margin:-5px 0 8px;}
+.deco-scene{width:100%;max-width:480px;}
+
+/* ===== SCREENS ===== */
+.screen{display:none}.screen.active{display:block;animation:slideUp .5s cubic-bezier(.22,.61,.36,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== CARD ===== */
+.card{
+    background:var(--warm-white);border:2px solid rgba(0,0,0,0.04);border-radius:28px;
+    padding:28px;margin-bottom:20px;box-shadow:var(--shadow-warm);position:relative;overflow:hidden;
+}
+/* Washi tape decoration on cards */
+.card::before{
+    content:'';position:absolute;top:-6px;right:30px;width:60px;height:24px;
+    background:var(--sun-light);opacity:0.5;border-radius:0 0 4px 4px;
+    transform:rotate(-2deg);z-index:2;
+}
+.card:nth-child(even)::before{background:var(--lavender);right:auto;left:30px;transform:rotate(2deg);}
+.card:nth-child(3n)::before{background:var(--sage);right:50px;}
+
+/* Corner doodle */
+.card::after{
+    content:'';position:absolute;bottom:8px;left:8px;width:40px;height:40px;opacity:0.08;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='15' stroke='%233D3229' stroke-width='2' fill='none' stroke-dasharray='4 3'/%3E%3Ccircle cx='20' cy='20' r='6' fill='%233D3229'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+.card h2{font-size:1.35rem;font-weight:800;margin-bottom:18px;display:flex;align-items:center;gap:12px;color:var(--charcoal);}
+.card-icon-svg{width:32px;height:32px;flex-shrink:0;}
+
+/* ===== CARD-DECORATED - special decorated version ===== */
+.card-decorated{
+    border:3px dashed var(--cream-dark);
+    background:linear-gradient(135deg,var(--warm-white) 0%,var(--paper) 100%);
+}
+.card-decorated::before{
+    width:70px;height:28px;background:var(--rose);opacity:0.45;transform:rotate(-3deg);
+}
+
+/* ===== FORMS ===== */
+label{display:block;font-weight:700;margin-bottom:8px;color:var(--ink-light);font-size:.92rem}
+input[type="text"],input[type="number"],textarea,select{
+    width:100%;padding:14px 18px;border-radius:16px;border:2px solid var(--cream-dark);
+    background:var(--paper);color:var(--ink);font-family:'Heebo',sans-serif;font-size:1rem;
+    transition:all .3s;direction:rtl;
+}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 4px rgba(58,175,169,0.12);background:white}
+textarea{resize:vertical;min-height:100px}
+.form-group{margin-bottom:18px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.checkbox-label{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;color:var(--ink-light)}
+.checkbox-label input[type="checkbox"]{width:22px;height:22px;accent-color:var(--teal);cursor:pointer}
+
+/* ===== BUTTONS ===== */
+.btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 30px;
+    border-radius:18px;border:none;font-family:'Heebo',sans-serif;font-size:1rem;font-weight:800;
+    cursor:pointer;transition:all .3s cubic-bezier(.22,.61,.36,1);position:relative;overflow:hidden;
+}
+/* Shine effect */
+.btn::after{
+    content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+    background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,0.2) 50%,transparent 70%);
+    transition:transform .5s;transform:translateX(-100%);
+}
+.btn:hover::after{transform:translateX(100%)}
+
+.btn-primary{background:linear-gradient(135deg,var(--coral),var(--sun));color:white;box-shadow:0 6px 20px rgba(232,105,74,0.3)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(232,105,74,0.4)}
+.btn-teal{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:white;box-shadow:0 6px 20px rgba(58,175,169,0.3)}
+.btn-teal:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(58,175,169,0.4)}
+.btn-secondary{background:var(--cream);color:var(--ink);border:2px solid var(--cream-dark)}
+.btn-danger{background:linear-gradient(135deg,var(--coral-deep),var(--coral));color:white}
+.btn-sm{padding:10px 20px;font-size:.88rem;border-radius:14px}
+.btn-block{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* ===== STATEMENTS ===== */
+.statements-list{list-style:none;margin:15px 0;max-height:300px;overflow-y:auto;padding-left:5px}
+.statements-list::-webkit-scrollbar{width:6px}
+.statements-list::-webkit-scrollbar-thumb{background:var(--cream-dark);border-radius:3px}
+.statement-item{
+    display:flex;align-items:center;justify-content:space-between;padding:12px 18px;
+    background:var(--paper);border-radius:16px;margin-bottom:8px;border:2px solid var(--cream-dark);
+    transition:all .25s;position:relative;
+}
+/* Tiny color dot */
+.statement-item::before{
+    content:'';width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-left:10px;
+}
+.statement-item:nth-child(5n+1)::before{background:var(--coral)}
+.statement-item:nth-child(5n+2)::before{background:var(--teal)}
+.statement-item:nth-child(5n+3)::before{background:var(--sun)}
+.statement-item:nth-child(5n+4)::before{background:var(--lavender)}
+.statement-item:nth-child(5n+5)::before{background:var(--sage)}
+
+.statement-item:hover{border-color:var(--sun-light)}
+.statement-item span{flex:1;font-size:.95rem;font-weight:500}
+.statement-item .remove-btn{background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:10px;transition:background .2s;display:flex;align-items:center}
+.statement-item .remove-btn svg{width:18px;height:18px}
+.statement-item .remove-btn:hover{background:rgba(232,105,74,0.1)}
+
+.statement-count{
+    display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:var(--paper);
+    border-radius:20px;font-size:.88rem;font-weight:700;color:var(--ink-light);border:2px solid var(--cream-dark);
+}
+.statement-count.enough{color:var(--teal-deep);border-color:var(--teal);background:rgba(58,175,169,0.06)}
+
+/* ===== SUGGESTIONS ===== */
+.suggestions-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.suggestion-chip{
+    padding:9px 18px;border-radius:50px;border:2px solid var(--cream-dark);background:var(--paper);
+    color:var(--ink);cursor:pointer;font-size:.85rem;font-family:'Heebo',sans-serif;font-weight:600;transition:all .25s;
+}
+.suggestion-chip:hover{border-color:var(--sun);background:rgba(242,165,65,0.08);transform:translateY(-1px)}
+.suggestion-chip.added{border-color:var(--sage);color:var(--sage-deep);opacity:.6;cursor:default}
+
+/* ===== TABS ===== */
+.tabs{display:flex;gap:4px;background:var(--paper);border-radius:18px;padding:4px;margin-bottom:18px;border:2px solid var(--cream-dark);overflow-x:auto}
+.tab{
+    flex:1;padding:11px 8px;text-align:center;border-radius:14px;cursor:pointer;font-weight:700;
+    font-size:.85rem;transition:all .3s;background:none;border:none;color:var(--ink-light);
+    font-family:'Heebo',sans-serif;white-space:nowrap;
+}
+.tab.active{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:white;box-shadow:0 4px 12px rgba(58,175,169,0.25)}
+
+/* ===== PRIZES ===== */
+.prize-item{
+    display:flex;align-items:flex-start;gap:16px;padding:18px;background:var(--paper);
+    border-radius:20px;margin-bottom:12px;border:2px solid var(--cream-dark);transition:border-color .3s;
+}
+.prize-item:hover{border-color:var(--sun-light)}
+.prize-medallion{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.prize-medallion svg{width:28px;height:28px}
+.prize-medallion.bronze{background:linear-gradient(135deg,#CD9B6D,#E8B88A)}
+.prize-medallion.silver{background:linear-gradient(135deg,#A8B5C5,#CBD5E0)}
+.prize-medallion.gold{background:linear-gradient(135deg,var(--sun),var(--sun-light))}
+.prize-medallion.diamond{background:linear-gradient(135deg,var(--coral),var(--sun))}
+.prize-info{flex:1}
+.prize-info h4{font-size:1rem;font-weight:800;margin-bottom:2px;color:var(--charcoal)}
+.prize-info p{color:var(--ink-light);font-size:.85rem;margin-bottom:8px}
+
+/* ===== GAME CODE ===== */
+.game-code-box{text-align:center;padding:35px}
+.game-code{
+    font-family:'Secular One',sans-serif;font-size:3.2rem;letter-spacing:10px;color:var(--coral);
+    text-shadow:2px 2px 0px rgba(242,165,65,0.3);margin:15px 0;
+}
+.game-link{display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--paper);border-radius:16px;border:2px solid var(--cream-dark);margin:15px auto;max-width:500px;direction:ltr}
+.game-link input{flex:1;background:none;border:none;color:var(--ink);font-size:.88rem;direction:ltr}
+.game-link input:focus{outline:none;box-shadow:none}
+.copy-btn{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:white;border:none;padding:10px 20px;border-radius:12px;cursor:pointer;font-family:'Heebo',sans-serif;font-weight:700;font-size:.88rem;transition:transform .2s}
+.copy-btn:hover{transform:scale(1.05)}
+
+/* ===== STUDENT JOIN ===== */
+.join-form{max-width:460px;margin:25px auto}
+.join-form input{text-align:center}
+.code-input{font-family:'Secular One',sans-serif!important;font-size:1.8rem!important;letter-spacing:6px!important;text-transform:uppercase;color:var(--coral)!important}
+
+.avatar-selector{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:15px 0}
+.avatar-option{
+    width:56px;height:56px;border-radius:18px;border:3px solid var(--cream-dark);cursor:pointer;
+    transition:all .25s;background:var(--paper);display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.avatar-option svg{width:38px;height:38px}
+.avatar-option:hover{border-color:var(--sun-light);transform:scale(1.08)}
+.avatar-option.selected{border-color:var(--teal);background:rgba(58,175,169,0.08);transform:scale(1.12);box-shadow:0 4px 15px rgba(58,175,169,0.2)}
+
+/* ===== BINGO BOARD ===== */
+.board-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+.player-info{display:flex;align-items:center;gap:14px}
+.player-avatar-wrap{
+    width:52px;height:52px;border-radius:18px;
+    background:linear-gradient(135deg,var(--sun-light),var(--sun));
+    display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(242,165,65,0.25);
+}
+.player-avatar-wrap svg{width:34px;height:34px}
+.player-name{font-size:1.25rem;font-weight:800;color:var(--charcoal)}
+.timer-badge{
+    display:flex;align-items:center;gap:8px;padding:10px 20px;background:var(--warm-white);
+    border-radius:18px;font-size:.92rem;font-weight:700;border:2px solid var(--cream-dark);box-shadow:var(--shadow-warm);
+}
+
+/* ===== BINGO GRID ===== */
+.bingo-grid{display:grid;gap:10px;margin:20px auto;max-width:620px}
+
+.bingo-cell{
+    aspect-ratio:1;display:flex;align-items:center;justify-content:center;text-align:center;
+    padding:8px 6px;border-radius:22px;border:3px solid var(--cream-dark);background:var(--warm-white);
+    cursor:pointer;font-size:.78rem;font-weight:600;line-height:1.35;
+    transition:all .35s cubic-bezier(.22,.61,.36,1);user-select:none;word-break:break-word;
+    position:relative;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,0.05);color:var(--charcoal);
+}
+/* Subtle inner pattern per cell */
+.bingo-cell::before{
+    content:'';position:absolute;inset:0;border-radius:19px;opacity:0.04;pointer-events:none;
+    background:url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1.5' fill='%233D3229'/%3E%3C/svg%3E") repeat;
+}
+
+.bingo-cell:hover:not(.marked):not(.free){border-color:var(--sun-light);transform:translateY(-3px) scale(1.03);box-shadow:0 8px 20px rgba(242,165,65,0.15)}
+
+.bingo-cell.marked{
+    background:linear-gradient(135deg,var(--teal),var(--teal-deep));border-color:var(--teal-deep);
+    color:white;font-weight:700;box-shadow:0 6px 18px rgba(58,175,169,0.3);
+    animation:cellPop .45s cubic-bezier(.22,.61,.36,1);
+}
+.bingo-cell.marked::before{opacity:0}
+.bingo-cell.marked::after{
+    content:'';position:absolute;top:6px;left:6px;width:18px;height:18px;opacity:.7;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.bingo-cell.free{
+    background:linear-gradient(135deg,var(--sun),var(--coral));border-color:var(--coral);
+    color:white;font-weight:800;font-size:.85rem;cursor:default;box-shadow:0 6px 18px rgba(232,105,74,0.25);
+}
+.bingo-cell.free::before{opacity:0}
+.bingo-cell.win-line{animation:winGlow 1.2s ease infinite;border-color:var(--sun)!important}
+
+@keyframes cellPop{0%{transform:scale(.88) rotate(-2deg)}50%{transform:scale(1.08) rotate(1deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes winGlow{0%,100%{box-shadow:0 6px 18px rgba(58,175,169,0.3)}50%{box-shadow:0 6px 30px rgba(242,165,65,0.5),0 0 15px rgba(58,175,169,0.2)}}
+
+/* ===== ACHIEVEMENTS ===== */
+.achievements-bar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0;justify-content:center}
+.achievement{
+    display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:18px;
+    border:2px solid var(--cream-dark);background:var(--warm-white);font-size:.85rem;font-weight:700;
+    opacity:.35;transition:all .5s ease;box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.achievement .ach-svg{width:24px;height:24px;flex-shrink:0}
+.achievement.unlocked{opacity:1;border-color:var(--sun);background:rgba(242,165,65,0.08);animation:achievePop .7s cubic-bezier(.22,.61,.36,1)}
+@keyframes achievePop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+
+/* ===== PROGRESS ===== */
+.progress-section{margin:18px 0;text-align:center}
+.progress-bar-bg{height:14px;background:var(--cream-dark);border-radius:7px;overflow:hidden;margin:8px 0;border:2px solid rgba(0,0,0,0.04)}
+.progress-bar-fill{
+    height:100%;background:linear-gradient(90deg,var(--teal),var(--sun));border-radius:7px;
+    transition:width .5s ease;position:relative;
+}
+.progress-bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.3) 0%,transparent 60%);border-radius:7px}
+.progress-text{font-size:.85rem;color:var(--ink-light);font-weight:600}
+
+/* ===== MODAL ===== */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(45,52,54,0.6);backdrop-filter:blur(8px);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{
+    background:var(--warm-white);border-radius:32px;padding:44px 36px;text-align:center;
+    max-width:440px;width:100%;border:3px solid var(--sun-light);box-shadow:0 20px 60px rgba(0,0,0,0.2);
+    animation:modalBounce .6s cubic-bezier(.22,.61,.36,1);position:relative;overflow:hidden;
+}
+/* Confetti pattern inside modal */
+.modal::before{
+    content:'';position:absolute;inset:0;opacity:0.04;pointer-events:none;
+    background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='5' y='5' width='6' height='6' fill='%23E8694A' rx='1' transform='rotate(20 8 8)'/%3E%3Ccircle cx='35' cy='12' r='3' fill='%233AAFA9'/%3E%3Crect x='50' y='40' width='5' height='5' fill='%23F2A541' rx='1' transform='rotate(-15 52 42)'/%3E%3Ccircle cx='15' cy='45' r='2.5' fill='%23C3AED6'/%3E%3Cpath d='M42 28L45 22L48 28Z' fill='%23A8C5A0'/%3E%3C/svg%3E") repeat;
+}
+@keyframes modalBounce{0%{transform:scale(.6) rotate(-3deg);opacity:0}60%{transform:scale(1.05) rotate(1deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.modal .trophy-svg{width:90px;height:90px;margin:0 auto 15px;animation:trophyFloat 2s ease-in-out infinite;position:relative;z-index:1}
+@keyframes trophyFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(3deg)}}
+.modal h2{font-family:'Secular One',sans-serif;font-size:1.8rem;color:var(--coral);margin-bottom:8px;position:relative;z-index:1}
+.modal p{color:var(--ink-light);margin-bottom:8px;position:relative;z-index:1}
+.prize-text{
+    font-size:1.1rem;font-weight:800;color:var(--charcoal);margin:18px 0;padding:16px;
+    background:linear-gradient(135deg,rgba(242,165,65,0.1),rgba(232,105,74,0.08));
+    border-radius:18px;border:2px solid var(--sun-light);position:relative;z-index:1;
+}
+
+/* ===== DASHBOARD ===== */
+.dashboard-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:20px 0}
+.stat-card{
+    background:var(--paper);border:2px solid var(--cream-dark);border-radius:20px;padding:20px 16px;
+    text-align:center;position:relative;overflow:hidden;
+}
+/* Decorative corner arc */
+.stat-card::after{
+    content:'';position:absolute;top:-15px;right:-15px;width:40px;height:40px;border-radius:50%;
+    opacity:0.1;
+}
+.stat-card:nth-child(1)::after{background:var(--coral)}
+.stat-card:nth-child(2)::after{background:var(--teal)}
+.stat-card:nth-child(3)::after{background:var(--sun)}
+.stat-card:nth-child(4)::after{background:var(--lavender)}
+
+.stat-card .stat-num{font-family:'Secular One',sans-serif;font-size:2.2rem;color:var(--coral)}
+.stat-card .stat-label{font-size:.82rem;color:var(--ink-light);margin-top:4px;font-weight:600}
+.players-list{list-style:none;max-height:300px;overflow-y:auto}
+.player-list-item{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--paper);border-radius:18px;margin-bottom:8px;border:2px solid var(--cream-dark)}
+.pl-info{display:flex;align-items:center;gap:12px}
+.pl-info .pl-av{width:36px;height:36px}
+.pl-progress{font-size:.85rem;color:var(--ink-light)}
+.badge{padding:5px 14px;border-radius:10px;font-size:.78rem;font-weight:800}
+.badge-bingo{background:rgba(242,165,65,0.15);color:var(--sun)}
+.badge-row{background:rgba(58,175,169,0.12);color:var(--teal-deep)}
+
+/* ===== BACK ===== */
+.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--ink-light);text-decoration:none;cursor:pointer;font-size:.92rem;margin-bottom:15px;padding:6px 0;transition:color .2s;background:none;border:none;font-family:'Heebo',sans-serif;font-weight:600}
+.back-btn:hover{color:var(--charcoal)}
+
+/* ===== CONFETTI ===== */
+.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden}
+.confetti-piece{position:absolute;top:-20px;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:rotate(0) scale(1)}100%{top:110vh;transform:rotate(720deg) scale(.5)}}
+
+/* ===== GAME ENDED ===== */
+.game-ended-banner{background:rgba(232,105,74,0.08);border:2px solid var(--coral);border-radius:20px;padding:16px 22px;text-align:center;margin-bottom:20px;color:var(--coral);font-weight:700}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--charcoal);color:white;padding:14px 30px;border-radius:18px;font-weight:700;z-index:2000;transition:transform .4s cubic-bezier(.22,.61,.36,1);box-shadow:0 8px 30px rgba(0,0,0,0.2)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+.inline-add{display:flex;gap:8px}.inline-add input{flex:1}
+
+/* ===== DIVIDER ===== */
+.deco-divider{
+    display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0 20px;
+    color:var(--cream-dark);
+}
+.deco-divider::before,.deco-divider::after{content:'';flex:1;height:2px;background:var(--cream-dark);border-radius:1px;}
+.deco-divider svg{flex-shrink:0;opacity:0.5;}
+
+/* ===== STICKER ===== */
+.sticker{
+    display:inline-flex;align-items:center;gap:6px;padding:6px 14px;
+    border-radius:50px;font-size:.78rem;font-weight:800;
+    transform:rotate(-2deg);box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+.sticker-coral{background:var(--coral);color:white}
+.sticker-teal{background:var(--teal);color:white}
+.sticker-sun{background:var(--sun);color:white}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:600px){
+    .container{padding:10px}
+    .header h1{font-size:2.2rem}
+    .card{padding:20px;border-radius:22px}
+    .form-row{grid-template-columns:1fr}
+    .bingo-grid{gap:6px}
+    .bingo-cell{font-size:.62rem;padding:5px 3px;border-radius:14px;border-width:2px}
+    .bingo-cell.marked::after{width:12px;height:12px;top:3px;left:3px}
+    .bingo-cell.free{font-size:.72rem}
+    .home-btn{padding:18px 20px;border-radius:20px}
+    .home-btn .icon-wrap{width:54px;height:54px;border-radius:16px}
+    .achievement{padding:8px 12px;font-size:.78rem}
+    .modal{padding:28px 20px;border-radius:26px}
+    .modal .trophy-svg{width:70px;height:70px}
+    .tab{font-size:.78rem;padding:9px 5px}
+    .floating-deco{display:none!important}
+    .bunting-flag{width:22px;height:28px}
+}
+
+.mt-10{margin-top:10px}.mt-20{margin-top:20px}.mb-10{margin-bottom:10px}
+.text-center{text-align:center}.text-muted{color:var(--ink-light)}
+.flex-between{display:flex;align-items:center;justify-content:space-between}
+.hidden{display:none!important}
+</style>
 </head>
 <body>
+
+<!-- ===== FLOATING DECORATIONS ===== -->
+<svg class="floating-deco float-star" style="top:8%;left:5%;width:40px" viewBox="0 0 40 40" fill="none"><path d="M20 2L25 15H38L28 23L31 36L20 28L9 36L12 23L2 15H15L20 2Z" fill="#F2A541" opacity="0.5"/></svg>
+<svg class="floating-deco float-circle" style="top:20%;right:4%;width:30px" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="none" stroke="#3AAFA9" stroke-width="2.5" stroke-dasharray="5 4" opacity="0.5"/></svg>
+<svg class="floating-deco float-heart" style="top:45%;left:3%;width:35px" viewBox="0 0 35 35" fill="none"><path d="M17.5 30L4 17C1 13 2 7 7 5.5C12 4 15 7 17.5 10C20 7 23 4 28 5.5C33 7 34 13 31 17L17.5 30Z" fill="#E8A0BF" opacity="0.4"/></svg>
+<svg class="floating-deco float-splash" style="top:65%;right:3%;width:45px" viewBox="0 0 50 50" fill="none"><circle cx="25" cy="25" r="12" fill="#A8C5A0" opacity="0.35"/><circle cx="12" cy="18" r="5" fill="#A8C5A0" opacity="0.2"/><circle cx="38" cy="15" r="4" fill="#A8C5A0" opacity="0.2"/><circle cx="35" cy="38" r="6" fill="#A8C5A0" opacity="0.15"/></svg>
+<svg class="floating-deco float-star" style="top:80%;left:6%;width:28px;animation-delay:-3s" viewBox="0 0 28 28" fill="none"><path d="M14 1L17 10H27L19 16L22 25L14 19L6 25L9 16L1 10H11L14 1Z" fill="#C3AED6" opacity="0.45"/></svg>
+<svg class="floating-deco float-circle" style="top:35%;right:6%;width:24px;animation-delay:-2s" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#F2A541" opacity="0.2"/></svg>
+<svg class="floating-deco float-splash" style="top:12%;right:12%;width:32px;animation-delay:-4s" viewBox="0 0 32 32" fill="none"><path d="M16 2C20 6 28 8 28 16C28 24 20 30 16 30C12 30 4 24 4 16C4 8 12 6 16 2Z" fill="#E8694A" opacity="0.15"/></svg>
+<svg class="floating-deco float-heart" style="top:75%;right:8%;width:25px;animation-delay:-5s" viewBox="0 0 25 25" fill="none"><path d="M12.5 22L3 12C1 9 2 5 5 4C8 3 10 5 12.5 7C15 5 17 3 20 4C23 5 24 9 22 12L12.5 22Z" fill="#F7C97E" opacity="0.35"/></svg>
+
+<!-- Paint splatter decorations -->
+<svg class="floating-deco" style="bottom:10%;left:2%;width:80px;opacity:0.12" viewBox="0 0 80 60" fill="none">
+    <ellipse cx="35" cy="30" rx="28" ry="22" fill="#E8694A"/><circle cx="65" cy="20" r="10" fill="#E8694A"/><circle cx="15" cy="15" r="8" fill="#E8694A"/><circle cx="55" cy="48" r="7" fill="#E8694A"/><circle cx="10" cy="42" r="5" fill="#E8694A"/>
+</svg>
+<svg class="floating-deco" style="top:50%;left:1%;width:60px;opacity:0.08" viewBox="0 0 60 50" fill="none">
+    <ellipse cx="30" cy="25" rx="22" ry="18" fill="#3AAFA9"/><circle cx="50" cy="15" r="8" fill="#3AAFA9"/><circle cx="10" cy="40" r="6" fill="#3AAFA9"/>
+</svg>
+
 <div class="container">
 
-    <!-- ===== HEADER ===== -->
-    <div class="header">
-        <h1>בינגו כיתתי</h1>
-        <p>משחק בינגו חווייתי וצבעוני לכיתה</p>
+<!-- ===== HEADER ===== -->
+<div class="header">
+    <h1>בינגו כיתתי</h1>
+    <p>משחק בינגו חווייתי וצבעוני לכיתה</p>
+    <div class="bunting">
+        <div class="bunting-flag" style="background:var(--coral)"></div>
+        <div class="bunting-flag" style="background:var(--sun)"></div>
+        <div class="bunting-flag" style="background:var(--teal)"></div>
+        <div class="bunting-flag" style="background:var(--lavender)"></div>
+        <div class="bunting-flag" style="background:var(--sage)"></div>
+        <div class="bunting-flag" style="background:var(--rose)"></div>
+        <div class="bunting-flag" style="background:var(--sky)"></div>
+        <div class="bunting-flag" style="background:var(--coral)"></div>
+        <div class="bunting-flag" style="background:var(--sun)"></div>
+        <div class="bunting-flag" style="background:var(--teal)"></div>
+        <div class="bunting-flag" style="background:var(--lavender)"></div>
+        <div class="bunting-flag" style="background:var(--sage)"></div>
     </div>
-
-    <!-- Decorative scene -->
-    <div class="deco-wrap">
-        <svg class="deco-scene" viewBox="0 0 600 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Rolling hills -->
-            <path d="M0 90 Q80 40 180 75 Q280 110 380 60 Q480 20 600 70 L600 120 L0 120Z" fill="#A8C5A0" opacity="0.3"/>
-            <path d="M0 100 Q120 60 240 85 Q360 110 480 70 Q540 55 600 80 L600 120 L0 120Z" fill="#A8C5A0" opacity="0.2"/>
-            <!-- Sun -->
-            <circle cx="500" cy="35" r="28" fill="#F2A541" opacity="0.6"/>
-            <circle cx="500" cy="35" r="20" fill="#F7C97E" opacity="0.8"/>
-            <!-- Sun rays -->
-            <g stroke="#F2A541" stroke-width="2" opacity="0.3">
-                <line x1="500" y1="0" x2="500" y2="10"/>
-                <line x1="525" y1="10" x2="530" y2="2"/>
-                <line x1="535" y1="30" x2="545" y2="28"/>
-                <line x1="530" y1="55" x2="538" y2="60"/>
-                <line x1="470" y1="10" x2="465" y2="2"/>
-                <line x1="465" y1="55" x2="458" y2="60"/>
-                <line x1="460" y1="30" x2="450" y2="28"/>
-            </g>
-            <!-- Clouds -->
-            <g opacity="0.3">
-                <ellipse cx="100" cy="25" rx="35" ry="14" fill="white"/>
-                <ellipse cx="80" cy="22" rx="20" ry="12" fill="white"/>
-                <ellipse cx="120" cy="22" rx="22" ry="12" fill="white"/>
-            </g>
-            <g opacity="0.25">
-                <ellipse cx="330" cy="18" rx="28" ry="11" fill="white"/>
-                <ellipse cx="315" cy="15" rx="16" ry="10" fill="white"/>
-                <ellipse cx="348" cy="15" rx="18" ry="9" fill="white"/>
-            </g>
-            <!-- Trees -->
-            <g transform="translate(60,50)">
-                <rect x="8" y="30" width="6" height="20" rx="2" fill="#8B7355"/>
-                <ellipse cx="11" cy="25" rx="16" ry="20" fill="#7BA370" opacity="0.7"/>
-                <ellipse cx="11" cy="22" rx="12" ry="16" fill="#A8C5A0" opacity="0.6"/>
-            </g>
-            <g transform="translate(450,45)">
-                <rect x="7" y="28" width="5" height="18" rx="2" fill="#8B7355"/>
-                <ellipse cx="10" cy="23" rx="14" ry="18" fill="#7BA370" opacity="0.7"/>
-                <ellipse cx="10" cy="20" rx="10" ry="14" fill="#A8C5A0" opacity="0.6"/>
-            </g>
-            <!-- Flowers -->
-            <g transform="translate(180,85)">
-                <line x1="0" y1="0" x2="0" y2="15" stroke="#7BA370" stroke-width="2"/>
-                <circle cx="0" cy="-2" r="5" fill="#E8A0BF" opacity="0.7"/>
-                <circle cx="0" cy="-2" r="2.5" fill="#F7C97E"/>
-            </g>
-            <g transform="translate(200,90)">
-                <line x1="0" y1="0" x2="0" y2="12" stroke="#7BA370" stroke-width="2"/>
-                <circle cx="0" cy="-2" r="4" fill="#E8694A" opacity="0.6"/>
-                <circle cx="0" cy="-2" r="2" fill="#F7C97E"/>
-            </g>
-            <g transform="translate(370,80)">
-                <line x1="0" y1="0" x2="0" y2="14" stroke="#7BA370" stroke-width="2"/>
-                <circle cx="0" cy="-2" r="5" fill="#C3AED6" opacity="0.7"/>
-                <circle cx="0" cy="-2" r="2.5" fill="#F7C97E"/>
-            </g>
-            <!-- Butterfly -->
-            <g transform="translate(280,30)" opacity="0.5">
-                <ellipse cx="-6" cy="-3" rx="6" ry="4" fill="#E8A0BF" transform="rotate(-20)"/>
-                <ellipse cx="6" cy="-3" rx="6" ry="4" fill="#C3AED6" transform="rotate(20)"/>
-                <ellipse cx="0" cy="0" rx="1.5" ry="4" fill="#8B7355"/>
-            </g>
-            <!-- Stars/sparkles -->
-            <g fill="#F2A541" opacity="0.4">
-                <polygon points="150,15 152,19 156,19 153,22 154,26 150,23 146,26 147,22 144,19 148,19" transform="scale(0.6)"/>
-                <polygon points="420,25 422,29 426,29 423,32 424,36 420,33 416,36 417,32 414,29 418,29" transform="scale(0.5)"/>
-            </g>
-        </svg>
-    </div>
-
-    <!-- ===== HOME SCREEN ===== -->
-    <div id="homeScreen" class="screen active">
-        <div class="home-buttons">
-            <div class="home-btn" onclick="showScreen('teacherSetup')">
-                <div class="icon-wrap">
-                    <svg viewBox="0 0 48 48" fill="none"><path d="M10 38V34C10 30 14 27 19 27H29C34 27 38 30 38 34V38" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="16" r="8" stroke="white" stroke-width="3"/><path d="M32 12L36 8M36 8L40 12M36 8V18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                <div>
-                    <h3>אני מורה</h3>
-                    <p>יצירת משחק בינגו חדש לכיתה</p>
-                </div>
-            </div>
-            <div class="home-btn" onclick="showScreen('studentJoin')">
-                <div class="icon-wrap">
-                    <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="32" height="32" rx="8" stroke="white" stroke-width="3"/><path d="M16 24H32M24 16V32" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>
-                </div>
-                <div>
-                    <h3>אני תלמיד/ה</h3>
-                    <p>הצטרפות למשחק עם קוד</p>
-                </div>
-            </div>
-            <div class="home-btn" onclick="loadExistingGame()">
-                <div class="icon-wrap">
-                    <svg viewBox="0 0 48 48" fill="none"><path d="M12 28C12 28 16 20 24 20C32 20 36 28 36 28" stroke="white" stroke-width="3" stroke-linecap="round"/><path d="M12 28L8 24M12 28L16 24" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="32" r="3" fill="white"/></svg>
-                </div>
-                <div>
-                    <h3>חזרה למשחק</h3>
-                    <p>המשך משחק ששמור אצלי</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== TEACHER SETUP ===== -->
-    <div id="teacherSetup" class="screen">
-        <button class="back-btn" onclick="showScreen('homeScreen')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-            חזרה
-        </button>
-
-        <div class="card">
-            <h2>
-                <svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><rect x="5" y="5" width="30" height="30" rx="8" fill="#F2A541" opacity="0.2"/><rect x="5" y="5" width="30" height="30" rx="8" stroke="#F2A541" stroke-width="2.5"/><path d="M13 15H27M13 20H24M13 25H20" stroke="#F2A541" stroke-width="2" stroke-linecap="round"/></svg>
-                הגדרות משחק
-            </h2>
-            <div class="form-group">
-                <label>שם המשחק</label>
-                <input type="text" id="gameName" placeholder='לדוגמה: "בינגו המעשים הטובים"'>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>משך המשחק (ימים)</label>
-                    <input type="number" id="gameDuration" min="1" max="30" value="7">
-                </div>
-                <div class="form-group">
-                    <label>גודל הלוח</label>
-                    <select id="boardSize">
-                        <option value="3">3×3 (9 משבצות)</option>
-                        <option value="4">4×4 (16 משבצות)</option>
-                        <option value="5" selected>5×5 (25 משבצות)</option>
-                    </select>
-                </div>
-            </div>
-            <label class="checkbox-label">
-                <input type="checkbox" id="freeCenter" checked>
-                משבצת מתנה במרכז הלוח
-            </label>
-        </div>
-
-        <div class="card">
-            <h2>
-                <svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="15" fill="#3AAFA9" opacity="0.15"/><circle cx="20" cy="20" r="15" stroke="#3AAFA9" stroke-width="2.5"/><path d="M14 20L18 24L26 16" stroke="#3AAFA9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                היגדים למשחק
-            </h2>
-            <div class="flex-between mb-10">
-                <span class="statement-count" id="statementCount">0 / 25 היגדים</span>
-            </div>
-            <div class="inline-add">
-                <input type="text" id="newStatement" placeholder="הקלידו היגד חדש..." onkeypress="if(event.key==='Enter')addStatement()">
-                <button class="btn btn-teal btn-sm" onclick="addStatement()">הוספה</button>
-            </div>
-            <ul class="statements-list" id="statementsList"></ul>
-        </div>
-
-        <div class="card">
-            <h2>
-                <svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><rect x="5" y="5" width="30" height="30" rx="15" fill="#E8A0BF" opacity="0.2"/><circle cx="20" cy="16" r="4" fill="#E8A0BF"/><path d="M12 30C12 25 15 22 20 22C25 22 28 25 28 30" stroke="#E8A0BF" stroke-width="2.5" stroke-linecap="round"/></svg>
-                היגדים מוצעים
-            </h2>
-            <div class="tabs" id="suggestionTabs">
-                <button class="tab active" onclick="showSuggestionCategory('daily',this)">יומיומי</button>
-                <button class="tab" onclick="showSuggestionCategory('social',this)">חברתי</button>
-                <button class="tab" onclick="showSuggestionCategory('school',this)">לימודי</button>
-                <button class="tab" onclick="showSuggestionCategory('fun',this)">כיפי</button>
-                <button class="tab" onclick="showSuggestionCategory('values',this)">ערכי</button>
-            </div>
-            <div id="suggestionsContainer" class="suggestions-grid"></div>
-        </div>
-
-        <div class="card">
-            <h2>
-                <svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><path d="M20 6L24 14H32L26 20L28 28L20 24L12 28L14 20L8 14H16L20 6Z" fill="#F2A541" opacity="0.2" stroke="#F2A541" stroke-width="2" stroke-linejoin="round"/></svg>
-                פרסים והישגים
-            </h2>
-            <p class="text-muted mb-10">מה התלמידים יקבלו כשהם משלימים הישגים?</p>
-
-            <div class="prize-item">
-                <div class="prize-medallion bronze">
-                    <svg viewBox="0 0 32 32" fill="none"><path d="M16 4L19 10H26L21 14L23 21L16 17L9 21L11 14L6 10H13L16 4Z" fill="white"/></svg>
-                </div>
-                <div class="prize-info">
-                    <h4>שורה / טור / אלכסון</h4>
-                    <p>השלמת קו אחד מלא</p>
-                    <input type="text" class="prize-input" id="prizeRow" placeholder="פטור משיעורי בית" value="פטור משיעורי בית">
-                </div>
-            </div>
-            <div class="prize-item">
-                <div class="prize-medallion silver">
-                    <svg viewBox="0 0 32 32" fill="none"><path d="M16 4L19 10H26L21 14L23 21L16 17L9 21L11 14L6 10H13L16 4Z" fill="white"/><path d="M16 8L18 12H22L19 15L20 19L16 16L12 19L13 15L10 12H14L16 8Z" fill="white" opacity="0.5"/></svg>
-                </div>
-                <div class="prize-info">
-                    <h4>שני קווים</h4>
-                    <p>השלמת שני קווים מלאים</p>
-                    <input type="text" class="prize-input" id="prizeTwoLines" placeholder="בחירת סרט לכיתה" value="בחירת סרט לכיתה">
-                </div>
-            </div>
-            <div class="prize-item">
-                <div class="prize-medallion gold">
-                    <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="14" r="9" fill="white" opacity="0.4"/><path d="M16 4L19 10H26L21 14L23 21L16 17L9 21L11 14L6 10H13L16 4Z" fill="white"/></svg>
-                </div>
-                <div class="prize-info">
-                    <h4>שלושה קווים</h4>
-                    <p>השלמת שלושה קווים מלאים</p>
-                    <input type="text" class="prize-input" id="prizeThreeLines" placeholder="ישיבה חופשית ליום" value="ישיבה חופשית ליום">
-                </div>
-            </div>
-            <div class="prize-item">
-                <div class="prize-medallion diamond">
-                    <svg viewBox="0 0 32 32" fill="none"><path d="M16 4L26 14L16 28L6 14L16 4Z" fill="white" opacity="0.4"/><path d="M16 8L22 14L16 24L10 14L16 8Z" fill="white"/></svg>
-                </div>
-                <div class="prize-info">
-                    <h4>בינגו מלא!</h4>
-                    <p>השלמת כל הלוח</p>
-                    <input type="text" class="prize-input" id="prizeFull" placeholder="תעודת הוקרה + הפתעה" value="תעודת הוקרה מיוחדת + הפתעה">
-                </div>
-            </div>
-        </div>
-
-        <div class="text-center mt-20" style="padding-bottom:20px">
-            <button class="btn btn-primary btn-block" onclick="createGame()" id="createGameBtn" style="font-size:1.15rem; padding:18px 30px;">
-                יצירת משחק
-            </button>
-        </div>
-    </div>
-
-    <!-- ===== GAME CREATED ===== -->
-    <div id="gameCreated" class="screen">
-        <button class="back-btn" onclick="showScreen('homeScreen')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-            חזרה לדף הבית
-        </button>
-
-        <div class="card game-code-box">
-            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" style="margin-bottom:10px">
-                <circle cx="40" cy="40" r="36" fill="#A8C5A0" opacity="0.2"/>
-                <circle cx="40" cy="40" r="36" stroke="#A8C5A0" stroke-width="3"/>
-                <path d="M28 40L36 48L54 30" stroke="#7BA370" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <h2 style="justify-content:center; font-family:'Secular One',sans-serif; color:var(--teal-deep)">המשחק נוצר בהצלחה!</h2>
-            <p class="text-muted">שתפו את הקוד הזה עם התלמידים:</p>
-            <div class="game-code" id="gameCodeDisplay"></div>
-            <div class="game-link">
-                <input type="text" id="gameLinkInput" readonly>
-                <button class="copy-btn" onclick="copyGameLink()">העתקה</button>
-            </div>
-            <p class="text-muted mt-10">המשחק פעיל ל-<span id="durationDisplay"></span> ימים</p>
-        </div>
-
-        <div class="text-center mt-20">
-            <button class="btn btn-teal" onclick="showTeacherDashboard()">
-                מעבר לדשבורד
-            </button>
-        </div>
-    </div>
-
-    <!-- ===== TEACHER DASHBOARD ===== -->
-    <div id="teacherDashboard" class="screen">
-        <button class="back-btn" onclick="showScreen('homeScreen')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-            חזרה לדף הבית
-        </button>
-
-        <div class="card">
-            <h2>
-                <svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="8" fill="#3AAFA9" opacity="0.15"/><rect x="10" y="22" width="5" height="10" rx="2" fill="#3AAFA9"/><rect x="17.5" y="16" width="5" height="16" rx="2" fill="#F2A541"/><rect x="25" y="10" width="5" height="22" rx="2" fill="#E8694A"/></svg>
-                דשבורד — <span id="dashGameName"></span>
-            </h2>
-            <div class="dashboard-stats">
-                <div class="stat-card">
-                    <div class="stat-num" id="statPlayers">0</div>
-                    <div class="stat-label">שחקנים</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" id="statCompleted">0</div>
-                    <div class="stat-label">השלימו שורה</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" id="statFullBingo">0</div>
-                    <div class="stat-label">בינגו מלא</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" id="statDaysLeft">0</div>
-                    <div class="stat-label">ימים נותרו</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>
-                <svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><circle cx="14" cy="14" r="6" fill="#E8A0BF" opacity="0.3" stroke="#E8A0BF" stroke-width="2"/><circle cx="26" cy="14" r="6" fill="#C3AED6" opacity="0.3" stroke="#C3AED6" stroke-width="2"/><path d="M6 34C6 28 10 24 14 24C16 24 18 24.5 20 26C22 24.5 24 24 26 24C30 24 34 28 34 34" stroke="#E8A0BF" stroke-width="2" stroke-linecap="round"/></svg>
-                שחקנים
-            </h2>
-            <ul class="players-list" id="playersList">
-                <li class="text-center text-muted" style="padding:30px">עדיין אין שחקנים</li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <div class="flex-between">
-                <h2 style="margin-bottom:0">קוד משחק</h2>
-                <span class="game-code" style="font-size:1.5rem" id="dashGameCode"></span>
-            </div>
-        </div>
-
-        <div class="text-center mt-20" style="padding-bottom:20px">
-            <button class="btn btn-danger" onclick="endGameEarly()">סיום המשחק</button>
-        </div>
-    </div>
-
-    <!-- ===== STUDENT JOIN ===== -->
-    <div id="studentJoin" class="screen">
-        <button class="back-btn" onclick="showScreen('homeScreen')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-            חזרה
-        </button>
-
-        <div class="join-form">
-            <div class="card">
-                <h2 style="justify-content:center">
-                    <svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><rect x="6" y="6" width="28" height="28" rx="14" fill="#87CEEB" opacity="0.2" stroke="#5DADE2" stroke-width="2.5"/><path d="M16 20H24M20 16V24" stroke="#5DADE2" stroke-width="2.5" stroke-linecap="round"/></svg>
-                    הצטרפות למשחק
-                </h2>
-                <div class="form-group">
-                    <label>קוד המשחק</label>
-                    <input type="text" id="joinCode" class="code-input" placeholder="ABCDE" maxlength="6">
-                </div>
-                <div class="form-group">
-                    <label>השם שלך</label>
-                    <input type="text" id="playerName" placeholder="איך קוראים לך?">
-                </div>
-                <div class="form-group">
-                    <label>בחרו דמות</label>
-                    <div class="avatar-selector" id="avatarSelector"></div>
-                </div>
-                <button class="btn btn-primary btn-block mt-10" onclick="joinGame()" style="font-size:1.1rem; padding:16px">
-                    הצטרפות למשחק
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== BINGO BOARD ===== -->
-    <div id="bingoBoard" class="screen">
-        <button class="back-btn" onclick="showScreen('homeScreen')">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
-            חזרה
-        </button>
-
-        <div class="board-header">
-            <div class="player-info">
-                <div class="player-avatar-wrap" id="boardAvatarWrap"></div>
-                <div>
-                    <div class="player-name" id="boardPlayerName"></div>
-                    <div class="text-muted" style="font-size:0.85rem" id="boardGameName"></div>
-                </div>
-            </div>
-            <div class="timer-badge" id="timerBadge">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sun)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="9"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>
-                <span id="daysRemaining"></span>
-            </div>
-        </div>
-
-        <div id="gameEndedBanner" class="game-ended-banner hidden">המשחק הסתיים!</div>
-
-        <div class="achievements-bar" id="achievementsBar"></div>
-
-        <div class="progress-section">
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
-            </div>
-            <div class="progress-text" id="progressText">0 / 25 משבצות סומנו</div>
-        </div>
-
-        <div class="bingo-grid" id="bingoGrid"></div>
-    </div>
-
 </div>
+
+<!-- Decorative scene -->
+<div class="deco-wrap">
+    <svg class="deco-scene" viewBox="0 0 600 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sky wash -->
+        <rect width="600" height="130" fill="url(#skyWash)" rx="20"/>
+        <defs>
+            <linearGradient id="skyWash" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#87CEEB" stop-opacity="0.15"/>
+                <stop offset="100%" stop-color="#FFF8F0" stop-opacity="0"/>
+            </linearGradient>
+        </defs>
+        <!-- Hills -->
+        <path d="M0 90 Q80 40 180 75 Q280 110 380 60 Q480 20 600 70 L600 130 L0 130Z" fill="#A8C5A0" opacity="0.35"/>
+        <path d="M0 100 Q120 60 240 85 Q360 115 480 70 Q540 55 600 80 L600 130 L0 130Z" fill="#A8C5A0" opacity="0.25"/>
+        <path d="M0 115 Q150 95 300 110 Q450 125 600 105 L600 130 L0 130Z" fill="#7BA370" opacity="0.15"/>
+        <!-- Sun -->
+        <circle cx="500" cy="30" r="30" fill="#F2A541" opacity="0.25"/>
+        <circle cx="500" cy="30" r="22" fill="#F7C97E" opacity="0.4"/>
+        <circle cx="500" cy="30" r="14" fill="#FFF8F0" opacity="0.5"/>
+        <!-- Sun rays -->
+        <g stroke="#F2A541" stroke-width="2" opacity="0.2" stroke-linecap="round">
+            <line x1="500" y1="-5" x2="500" y2="5"/><line x1="527" y1="7" x2="533" y2="0"/>
+            <line x1="538" y1="30" x2="548" y2="30"/><line x1="527" y1="53" x2="533" y2="60"/>
+            <line x1="473" y1="7" x2="467" y2="0"/><line x1="462" y1="30" x2="452" y2="30"/>
+            <line x1="473" y1="53" x2="467" y2="60"/>
+        </g>
+        <!-- Clouds -->
+        <g opacity="0.4"><ellipse cx="100" cy="22" rx="38" ry="14" fill="white"/><ellipse cx="78" cy="18" rx="22" ry="13" fill="white"/><ellipse cx="125" cy="19" rx="24" ry="12" fill="white"/></g>
+        <g opacity="0.3"><ellipse cx="340" cy="15" rx="30" ry="12" fill="white"/><ellipse cx="322" cy="12" rx="18" ry="10" fill="white"/><ellipse cx="358" cy="12" rx="20" ry="9" fill="white"/></g>
+        <!-- Trees -->
+        <g transform="translate(55,45)"><rect x="9" y="32" width="7" height="22" rx="3" fill="#8B7355"/><ellipse cx="12" cy="26" rx="18" ry="22" fill="#7BA370" opacity="0.7"/><ellipse cx="12" cy="22" rx="13" ry="17" fill="#A8C5A0" opacity="0.6"/><ellipse cx="8" cy="28" rx="6" ry="8" fill="#7BA370" opacity="0.3"/></g>
+        <g transform="translate(460,40)"><rect x="8" y="30" width="6" height="20" rx="2" fill="#8B7355"/><ellipse cx="11" cy="24" rx="16" ry="20" fill="#7BA370" opacity="0.7"/><ellipse cx="11" cy="20" rx="12" ry="15" fill="#A8C5A0" opacity="0.6"/></g>
+        <g transform="translate(540,55)"><rect x="5" y="22" width="5" height="16" rx="2" fill="#8B7355"/><ellipse cx="7" cy="18" rx="12" ry="15" fill="#7BA370" opacity="0.6"/><ellipse cx="7" cy="15" rx="9" ry="11" fill="#A8C5A0" opacity="0.5"/></g>
+        <!-- Flowers -->
+        <g transform="translate(160,88)"><line x1="0" y1="0" x2="0" y2="18" stroke="#7BA370" stroke-width="2"/><circle cx="0" cy="-3" r="6" fill="#E8A0BF" opacity="0.7"/><circle cx="0" cy="-3" r="3" fill="#F7C97E"/></g>
+        <g transform="translate(180,92)"><line x1="0" y1="0" x2="0" y2="14" stroke="#7BA370" stroke-width="2"/><circle cx="0" cy="-3" r="5" fill="#C3AED6" opacity="0.7"/><circle cx="0" cy="-3" r="2.5" fill="#F7C97E"/></g>
+        <g transform="translate(200,95)"><line x1="0" y1="0" x2="0" y2="10" stroke="#7BA370" stroke-width="1.5"/><circle cx="0" cy="-2" r="4" fill="#E8694A" opacity="0.5"/><circle cx="0" cy="-2" r="2" fill="#F7C97E"/></g>
+        <g transform="translate(380,82)"><line x1="0" y1="0" x2="0" y2="16" stroke="#7BA370" stroke-width="2"/><circle cx="0" cy="-3" r="5.5" fill="#E8A0BF" opacity="0.6"/><circle cx="0" cy="-3" r="2.5" fill="white" opacity="0.6"/></g>
+        <g transform="translate(400,88)"><line x1="0" y1="0" x2="0" y2="12" stroke="#7BA370" stroke-width="1.5"/><circle cx="0" cy="-2" r="4" fill="#F2A541" opacity="0.5"/><circle cx="0" cy="-2" r="2" fill="white" opacity="0.5"/></g>
+        <!-- Butterflies -->
+        <g transform="translate(270,25)" opacity="0.5"><ellipse cx="-7" cy="-3" rx="7" ry="5" fill="#E8A0BF" transform="rotate(-20)"/><ellipse cx="7" cy="-3" rx="7" ry="5" fill="#C3AED6" transform="rotate(20)"/><ellipse cx="0" cy="0" rx="1.5" ry="4.5" fill="#8B7355"/></g>
+        <g transform="translate(420,35)" opacity="0.35"><ellipse cx="-5" cy="-2" rx="5" ry="4" fill="#F7C97E" transform="rotate(-15)"/><ellipse cx="5" cy="-2" rx="5" ry="4" fill="#F2A541" transform="rotate(15)"/><ellipse cx="0" cy="0" rx="1" ry="3.5" fill="#8B7355"/></g>
+        <!-- Birds -->
+        <g stroke="#8B7355" stroke-width="1.5" fill="none" opacity="0.3" stroke-linecap="round"><path d="M230 20Q235 15 240 20"/><path d="M245 18Q250 13 255 18"/></g>
+        <g stroke="#8B7355" stroke-width="1.5" fill="none" opacity="0.2" stroke-linecap="round"><path d="M140 35Q144 30 148 35"/><path d="M152 33Q156 28 160 33"/></g>
+        <!-- Stars/sparkles -->
+        <g fill="#F2A541" opacity="0.3"><polygon points="82,12 84,16 88,16 85,19 86,23 82,20 78,23 79,19 76,16 80,16" transform="scale(0.7)"/></g>
+        <!-- Small house -->
+        <g transform="translate(300,72)" opacity="0.4">
+            <rect x="0" y="10" width="22" height="18" rx="2" fill="#E8B88A"/><path d="M-3 12L11 0L25 12Z" fill="#E8694A" opacity="0.6"/><rect x="8" y="18" width="6" height="10" rx="1" fill="#8B7355" opacity="0.5"/><rect x="2" y="14" width="5" height="5" rx="1" fill="#87CEEB" opacity="0.4"/>
+        </g>
+        <!-- Rainbow arc (subtle) -->
+        <path d="M100 130 Q200 50 300 130" stroke="#E8694A" stroke-width="3" fill="none" opacity="0.06"/>
+        <path d="M105 130 Q205 55 305 130" stroke="#F2A541" stroke-width="3" fill="none" opacity="0.06"/>
+        <path d="M110 130 Q210 60 310 130" stroke="#F7C97E" stroke-width="3" fill="none" opacity="0.06"/>
+        <path d="M115 130 Q215 65 315 130" stroke="#A8C5A0" stroke-width="3" fill="none" opacity="0.06"/>
+        <path d="M120 130 Q220 70 320 130" stroke="#87CEEB" stroke-width="3" fill="none" opacity="0.06"/>
+    </svg>
+</div>
+
+<!-- ===== HOME SCREEN ===== -->
+<div id="homeScreen" class="screen active">
+    <div class="home-buttons">
+        <div class="home-btn" onclick="showScreen('teacherSetup')">
+            <div class="icon-wrap"><svg viewBox="0 0 48 48" fill="none"><path d="M10 38V34C10 30 14 27 19 27H29C34 27 38 30 38 34V38" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="16" r="8" stroke="white" stroke-width="3"/><path d="M32 12L36 8M36 8L40 12M36 8V18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div><h3>אני מורה</h3><p>יצירת משחק בינגו חדש לכיתה</p></div>
+        </div>
+        <div class="home-btn" onclick="showScreen('studentJoin')">
+            <div class="icon-wrap"><svg viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="32" height="32" rx="8" stroke="white" stroke-width="3"/><path d="M16 24H32M24 16V32" stroke="white" stroke-width="3" stroke-linecap="round"/></svg></div>
+            <div><h3>אני תלמיד/ה</h3><p>הצטרפות למשחק עם קוד</p></div>
+        </div>
+        <div class="home-btn" onclick="loadExistingGame()">
+            <div class="icon-wrap"><svg viewBox="0 0 48 48" fill="none"><path d="M12 28C12 28 16 20 24 20C32 20 36 28 36 28" stroke="white" stroke-width="3" stroke-linecap="round"/><path d="M12 28L8 24M12 28L16 24" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="32" r="3" fill="white"/></svg></div>
+            <div><h3>חזרה למשחק</h3><p>המשך משחק ששמור אצלי</p></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TEACHER SETUP ===== -->
+<div id="teacherSetup" class="screen">
+    <button class="back-btn" onclick="showScreen('homeScreen')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg> חזרה</button>
+
+    <div class="card">
+        <h2><svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><rect x="5" y="5" width="30" height="30" rx="8" fill="#F2A541" opacity="0.2"/><rect x="5" y="5" width="30" height="30" rx="8" stroke="#F2A541" stroke-width="2.5"/><path d="M13 15H27M13 20H24M13 25H20" stroke="#F2A541" stroke-width="2" stroke-linecap="round"/></svg> הגדרות משחק</h2>
+        <div class="form-group"><label>שם המשחק</label><input type="text" id="gameName" placeholder='לדוגמה: "בינגו המעשים הטובים"'></div>
+        <div class="form-row">
+            <div class="form-group"><label>משך המשחק (ימים)</label><input type="number" id="gameDuration" min="1" max="30" value="7"></div>
+            <div class="form-group"><label>גודל הלוח</label><select id="boardSize"><option value="3">3x3 (9 משבצות)</option><option value="4">4x4 (16 משבצות)</option><option value="5" selected>5x5 (25 משבצות)</option></select></div>
+        </div>
+        <label class="checkbox-label"><input type="checkbox" id="freeCenter" checked> משבצת מתנה במרכז הלוח</label>
+    </div>
+
+    <div class="deco-divider"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="4" fill="var(--sun)" opacity="0.5"/></svg></div>
+
+    <div class="card">
+        <h2><svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="15" fill="#3AAFA9" opacity="0.15"/><circle cx="20" cy="20" r="15" stroke="#3AAFA9" stroke-width="2.5"/><path d="M14 20L18 24L26 16" stroke="#3AAFA9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> היגדים למשחק</h2>
+        <div class="flex-between mb-10"><span class="statement-count" id="statementCount">0 / 25 היגדים</span></div>
+        <div class="inline-add">
+            <input type="text" id="newStatement" placeholder="הקלידו היגד חדש..." onkeypress="if(event.key==='Enter')addStatement()">
+            <button class="btn btn-teal btn-sm" onclick="addStatement()">הוספה</button>
+        </div>
+        <ul class="statements-list" id="statementsList"></ul>
+    </div>
+
+    <div class="card card-decorated">
+        <h2><svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><rect x="5" y="5" width="30" height="30" rx="15" fill="#E8A0BF" opacity="0.2"/><circle cx="20" cy="16" r="4" fill="#E8A0BF"/><path d="M12 30C12 25 15 22 20 22C25 22 28 25 28 30" stroke="#E8A0BF" stroke-width="2.5" stroke-linecap="round"/></svg> היגדים מוצעים</h2>
+        <div class="tabs" id="suggestionTabs">
+            <button class="tab active" onclick="showSuggestionCategory('daily',this)">יומיומי</button>
+            <button class="tab" onclick="showSuggestionCategory('social',this)">חברתי</button>
+            <button class="tab" onclick="showSuggestionCategory('school',this)">לימודי</button>
+            <button class="tab" onclick="showSuggestionCategory('fun',this)">כיפי</button>
+            <button class="tab" onclick="showSuggestionCategory('values',this)">ערכי</button>
+        </div>
+        <div id="suggestionsContainer" class="suggestions-grid"></div>
+    </div>
+
+    <div class="deco-divider"><svg width="24" height="12" viewBox="0 0 24 12"><path d="M2 6Q6 1 12 6Q18 11 22 6" stroke="var(--teal)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/></svg></div>
+
+    <div class="card">
+        <h2><svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><path d="M20 6L24 14H32L26 20L28 28L20 24L12 28L14 20L8 14H16L20 6Z" fill="#F2A541" opacity="0.2" stroke="#F2A541" stroke-width="2" stroke-linejoin="round"/></svg> פרסים והישגים</h2>
+        <p class="text-muted mb-10">מה התלמידים יקבלו כשהם משלימים הישגים?</p>
+        <div class="prize-item"><div class="prize-medallion bronze"><svg viewBox="0 0 32 32" fill="none"><path d="M16 4L19 10H26L21 14L23 21L16 17L9 21L11 14L6 10H13L16 4Z" fill="white"/></svg></div><div class="prize-info"><h4>שורה / טור / אלכסון</h4><p>השלמת קו אחד מלא</p><input type="text" class="prize-input" id="prizeRow" value="פטור משיעורי בית"></div></div>
+        <div class="prize-item"><div class="prize-medallion silver"><svg viewBox="0 0 32 32" fill="none"><path d="M16 4L19 10H26L21 14L23 21L16 17L9 21L11 14L6 10H13L16 4Z" fill="white"/><path d="M16 8L18 12H22L19 15L20 19L16 16L12 19L13 15L10 12H14L16 8Z" fill="white" opacity="0.5"/></svg></div><div class="prize-info"><h4>שני קווים</h4><p>השלמת שני קווים מלאים</p><input type="text" class="prize-input" id="prizeTwoLines" value="בחירת סרט לכיתה"></div></div>
+        <div class="prize-item"><div class="prize-medallion gold"><svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="14" r="9" fill="white" opacity="0.4"/><path d="M16 4L19 10H26L21 14L23 21L16 17L9 21L11 14L6 10H13L16 4Z" fill="white"/></svg></div><div class="prize-info"><h4>שלושה קווים</h4><p>השלמת שלושה קווים מלאים</p><input type="text" class="prize-input" id="prizeThreeLines" value="ישיבה חופשית ליום"></div></div>
+        <div class="prize-item"><div class="prize-medallion diamond"><svg viewBox="0 0 32 32" fill="none"><path d="M16 4L26 14L16 28L6 14L16 4Z" fill="white" opacity="0.4"/><path d="M16 8L22 14L16 24L10 14L16 8Z" fill="white"/></svg></div><div class="prize-info"><h4>בינגו מלא!</h4><p>השלמת כל הלוח</p><input type="text" class="prize-input" id="prizeFull" value="תעודת הוקרה מיוחדת + הפתעה"></div></div>
+    </div>
+
+    <div class="text-center mt-20" style="padding-bottom:20px"><button class="btn btn-primary btn-block" onclick="createGame()" style="font-size:1.15rem;padding:18px 30px">יצירת משחק</button></div>
+</div>
+
+<!-- ===== GAME CREATED ===== -->
+<div id="gameCreated" class="screen">
+    <button class="back-btn" onclick="showScreen('homeScreen')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg> חזרה לדף הבית</button>
+    <div class="card game-code-box">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" style="margin-bottom:10px"><circle cx="40" cy="40" r="36" fill="#A8C5A0" opacity="0.2"/><circle cx="40" cy="40" r="36" stroke="#A8C5A0" stroke-width="3"/><path d="M28 40L36 48L54 30" stroke="#7BA370" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h2 style="justify-content:center;font-family:'Secular One',sans-serif;color:var(--teal-deep)">המשחק נוצר בהצלחה!</h2>
+        <p class="text-muted">שתפו את הקוד עם התלמידים:</p>
+        <div class="game-code" id="gameCodeDisplay"></div>
+        <div class="game-link"><input type="text" id="gameLinkInput" readonly><button class="copy-btn" onclick="copyGameLink()">העתקה</button></div>
+        <p class="text-muted mt-10">המשחק פעיל ל-<span id="durationDisplay"></span> ימים</p>
+    </div>
+    <div class="text-center mt-20"><button class="btn btn-teal" onclick="showTeacherDashboard()">מעבר לדשבורד</button></div>
+</div>
+
+<!-- ===== TEACHER DASHBOARD ===== -->
+<div id="teacherDashboard" class="screen">
+    <button class="back-btn" onclick="showScreen('homeScreen')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg> חזרה</button>
+    <div class="card">
+        <h2><svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><rect x="4" y="4" width="32" height="32" rx="8" fill="#3AAFA9" opacity="0.15"/><rect x="10" y="22" width="5" height="10" rx="2" fill="#3AAFA9"/><rect x="17.5" y="16" width="5" height="16" rx="2" fill="#F2A541"/><rect x="25" y="10" width="5" height="22" rx="2" fill="#E8694A"/></svg> דשבורד — <span id="dashGameName"></span></h2>
+        <div class="dashboard-stats">
+            <div class="stat-card"><div class="stat-num" id="statPlayers">0</div><div class="stat-label">שחקנים</div></div>
+            <div class="stat-card"><div class="stat-num" id="statCompleted">0</div><div class="stat-label">השלימו שורה</div></div>
+            <div class="stat-card"><div class="stat-num" id="statFullBingo">0</div><div class="stat-label">בינגו מלא</div></div>
+            <div class="stat-card"><div class="stat-num" id="statDaysLeft">0</div><div class="stat-label">ימים נותרו</div></div>
+        </div>
+    </div>
+    <div class="card"><h2><svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><circle cx="14" cy="14" r="6" fill="#E8A0BF" opacity="0.3" stroke="#E8A0BF" stroke-width="2"/><circle cx="26" cy="14" r="6" fill="#C3AED6" opacity="0.3" stroke="#C3AED6" stroke-width="2"/><path d="M6 34C6 28 10 24 14 24C16 24 18 24.5 20 26C22 24.5 24 24 26 24C30 24 34 28 34 34" stroke="#E8A0BF" stroke-width="2" stroke-linecap="round"/></svg> שחקנים</h2><ul class="players-list" id="playersList"><li class="text-center text-muted" style="padding:30px">עדיין אין שחקנים</li></ul></div>
+    <div class="card"><div class="flex-between"><h2 style="margin-bottom:0">קוד משחק</h2><span class="game-code" style="font-size:1.5rem" id="dashGameCode"></span></div></div>
+    <div class="text-center mt-20" style="padding-bottom:20px"><button class="btn btn-danger" onclick="endGameEarly()">סיום המשחק</button></div>
+</div>
+
+<!-- ===== STUDENT JOIN ===== -->
+<div id="studentJoin" class="screen">
+    <button class="back-btn" onclick="showScreen('homeScreen')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg> חזרה</button>
+    <div class="join-form"><div class="card card-decorated">
+        <h2 style="justify-content:center"><svg class="card-icon-svg" viewBox="0 0 40 40" fill="none"><rect x="6" y="6" width="28" height="28" rx="14" fill="#87CEEB" opacity="0.2" stroke="#5DADE2" stroke-width="2.5"/><path d="M16 20H24M20 16V24" stroke="#5DADE2" stroke-width="2.5" stroke-linecap="round"/></svg> הצטרפות למשחק</h2>
+        <div class="form-group"><label>קוד המשחק</label><input type="text" id="joinCode" class="code-input" placeholder="ABCDE" maxlength="6"></div>
+        <div class="form-group"><label>השם שלך</label><input type="text" id="playerName" placeholder="איך קוראים לך?"></div>
+        <div class="form-group"><label>בחרו דמות</label><div class="avatar-selector" id="avatarSelector"></div></div>
+        <button class="btn btn-primary btn-block mt-10" onclick="joinGame()" style="font-size:1.1rem;padding:16px">הצטרפות למשחק</button>
+    </div></div>
+</div>
+
+<!-- ===== BINGO BOARD ===== -->
+<div id="bingoBoard" class="screen">
+    <button class="back-btn" onclick="showScreen('homeScreen')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg> חזרה</button>
+    <div class="board-header">
+        <div class="player-info"><div class="player-avatar-wrap" id="boardAvatarWrap"></div><div><div class="player-name" id="boardPlayerName"></div><div class="text-muted" style="font-size:.85rem" id="boardGameName"></div></div></div>
+        <div class="timer-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sun)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="9"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg><span id="daysRemaining"></span></div>
+    </div>
+    <div id="gameEndedBanner" class="game-ended-banner hidden">המשחק הסתיים!</div>
+    <div class="achievements-bar" id="achievementsBar"></div>
+    <div class="progress-section"><div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div><div class="progress-text" id="progressText">0 / 25 משבצות סומנו</div></div>
+    <div class="bingo-grid" id="bingoGrid"></div>
+</div>
+
+</div><!-- container -->
 
 <!-- WIN MODAL -->
-<div class="modal-overlay" id="winModal">
-    <div class="modal">
-        <div class="trophy-svg" id="modalTrophy"></div>
-        <h2 id="modalTitle">מזל טוב!</h2>
-        <p id="modalMessage">השלמת הישג חדש!</p>
-        <div class="prize-text" id="modalPrize"></div>
-        <button class="btn btn-primary mt-10" onclick="closeModal()">יופי!</button>
-    </div>
-</div>
+<div class="modal-overlay" id="winModal"><div class="modal">
+    <div class="trophy-svg" id="modalTrophy"></div>
+    <h2 id="modalTitle">מזל טוב!</h2>
+    <p id="modalMessage">השלמת הישג חדש!</p>
+    <div class="prize-text" id="modalPrize"></div>
+    <button class="btn btn-primary mt-10" onclick="closeModal()">יופי!</button>
+</div></div>
 
-<!-- CONFETTI -->
 <div class="confetti-container" id="confettiContainer"></div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
 // ===== SVG AVATARS =====
-const AVATAR_SVGS = [
-    // Fox
-    `<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="28" fill="#F2A541"/><path d="M14 18L22 28V18L30 28L38 18V28L46 18V36C46 44 38 50 30 50C22 50 14 44 14 36V18Z" fill="#E8694A"/><circle cx="22" cy="34" r="3" fill="#3D3229"/><circle cx="38" cy="34" r="3" fill="#3D3229"/><ellipse cx="30" cy="40" rx="4" ry="2.5" fill="#3D3229"/><circle cx="21" cy="33" r="1" fill="white"/><circle cx="37" cy="33" r="1" fill="white"/></svg>`,
-    // Cat
-    `<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="28" fill="#C3AED6"/><path d="M14 16L20 30H14V42C14 48 22 54 30 54C38 54 46 48 46 42V30H40L46 16L36 26H24L14 16Z" fill="#A08CB5"/><circle cx="22" cy="36" r="3" fill="#3D3229"/><circle cx="38" cy="36" r="3" fill="#3D3229"/><path d="M27 41Q30 44 33 41" stroke="#3D3229" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="36" x2="20" y2="37" stroke="#A08CB5" stroke-width="1.5"/><line x1="12" y1="40" x2="20" y2="39" stroke="#A08CB5" stroke-width="1.5"/><line x1="40" y1="37" x2="48" y2="36" stroke="#A08CB5" stroke-width="1.5"/><line x1="40" y1="39" x2="48" y2="40" stroke="#A08CB5" stroke-width="1.5"/></svg>`,
-    // Bear
-    `<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="34" r="24" fill="#CD9B6D"/><circle cx="14" cy="16" r="8" fill="#CD9B6D"/><circle cx="14" cy="16" r="5" fill="#E8B88A"/><circle cx="46" cy="16" r="8" fill="#CD9B6D"/><circle cx="46" cy="16" r="5" fill="#E8B88A"/><circle cx="22" cy="32" r="3" fill="#3D3229"/><circle cx="38" cy="32" r="3" fill="#3D3229"/><ellipse cx="30" cy="38" rx="5" ry="4" fill="#E8B88A"/><ellipse cx="30" cy="37" rx="2.5" ry="2" fill="#3D3229"/></svg>`,
-    // Bunny
-    `<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="36" r="22" fill="#F5EDE0"/><ellipse cx="20" cy="10" rx="6" ry="16" fill="#F5EDE0" stroke="#E8A0BF" stroke-width="1"/><ellipse cx="20" cy="10" rx="3" ry="12" fill="#E8A0BF" opacity="0.3"/><ellipse cx="40" cy="10" rx="6" ry="16" fill="#F5EDE0" stroke="#E8A0BF" stroke-width="1"/><ellipse cx="40" cy="10" rx="3" ry="12" fill="#E8A0BF" opacity="0.3"/><circle cx="23" cy="34" r="2.5" fill="#3D3229"/><circle cx="37" cy="34" r="2.5" fill="#3D3229"/><ellipse cx="30" cy="39" rx="2" ry="1.5" fill="#E8A0BF"/><path d="M26 42Q30 46 34 42" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-    // Owl
-    `<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="32" r="24" fill="#8B7355"/><path d="M12 14L20 24H40L48 14" stroke="#8B7355" stroke-width="4" stroke-linecap="round"/><circle cx="22" cy="32" r="8" fill="#FDF6EC"/><circle cx="38" cy="32" r="8" fill="#FDF6EC"/><circle cx="22" cy="32" r="4" fill="#3D3229"/><circle cx="38" cy="32" r="4" fill="#3D3229"/><circle cx="21" cy="31" r="1.5" fill="white"/><circle cx="37" cy="31" r="1.5" fill="white"/><path d="M28 40L30 43L32 40" fill="#F2A541"/></svg>`,
-    // Panda
-    `<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="32" r="24" fill="white"/><ellipse cx="16" cy="16" rx="8" ry="7" fill="#3D3229"/><ellipse cx="44" cy="16" rx="8" ry="7" fill="#3D3229"/><ellipse cx="22" cy="30" rx="8" ry="7" fill="#3D3229" opacity="0.8"/><ellipse cx="38" cy="30" rx="8" ry="7" fill="#3D3229" opacity="0.8"/><circle cx="22" cy="30" r="3" fill="white"/><circle cx="38" cy="30" r="3" fill="white"/><circle cx="22" cy="29" r="1.5" fill="#3D3229"/><circle cx="38" cy="29" r="1.5" fill="#3D3229"/><ellipse cx="30" cy="38" rx="3" ry="2" fill="#3D3229"/></svg>`,
-    // Frog
-    `<svg viewBox="0 0 60 60" fill="none"><ellipse cx="30" cy="36" rx="24" ry="20" fill="#7BA370"/><circle cx="18" cy="18" r="10" fill="#A8C5A0"/><circle cx="42" cy="18" r="10" fill="#A8C5A0"/><circle cx="18" cy="17" r="5" fill="white"/><circle cx="42" cy="17" r="5" fill="white"/><circle cx="18" cy="17" r="3" fill="#3D3229"/><circle cx="42" cy="17" r="3" fill="#3D3229"/><path d="M20 40Q30 48 40 40" stroke="#3D3229" stroke-width="2" stroke-linecap="round"/><circle cx="30" cy="32" r="1.5" fill="#3D3229"/></svg>`,
-    // Lion
-    `<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="28" fill="#F2A541"/><circle cx="30" cy="30" r="28" stroke="#E8694A" stroke-width="3" stroke-dasharray="4 3"/><circle cx="30" cy="34" r="18" fill="#F7C97E"/><circle cx="23" cy="32" r="3" fill="#3D3229"/><circle cx="37" cy="32" r="3" fill="#3D3229"/><ellipse cx="30" cy="38" rx="4" ry="2.5" fill="#E8694A"/><path d="M26 42Q30 46 34 42" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-    // Unicorn
-    `<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="34" r="22" fill="white"/><path d="M30 2L34 18H26L30 2Z" fill="#F2A541"/><path d="M18 14C10 16 8 22 10 26" stroke="#E8A0BF" stroke-width="3" stroke-linecap="round"/><path d="M42 14C50 16 52 22 50 26" stroke="#C3AED6" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="34" r="2.5" fill="#3D3229"/><circle cx="37" cy="34" r="2.5" fill="#3D3229"/><path d="M27 40Q30 43 33 40" stroke="#E8A0BF" stroke-width="1.5" stroke-linecap="round"/><circle cx="18" cy="36" r="4" fill="#E8A0BF" opacity="0.2"/><circle cx="42" cy="36" r="4" fill="#C3AED6" opacity="0.2"/></svg>`,
-    // Robot
-    `<svg viewBox="0 0 60 60" fill="none"><rect x="10" y="18" width="40" height="34" rx="10" fill="#5DADE2"/><rect x="16" y="24" width="12" height="8" rx="3" fill="white"/><rect x="32" y="24" width="12" height="8" rx="3" fill="white"/><circle cx="22" cy="28" r="2.5" fill="#3D3229"/><circle cx="38" cy="28" r="2.5" fill="#3D3229"/><rect x="22" y="38" width="16" height="4" rx="2" fill="white"/><line x1="26" y1="38" x2="26" y2="42" stroke="#5DADE2" stroke-width="1.5"/><line x1="30" y1="38" x2="30" y2="42" stroke="#5DADE2" stroke-width="1.5"/><line x1="34" y1="38" x2="34" y2="42" stroke="#5DADE2" stroke-width="1.5"/><line x1="30" y1="8" x2="30" y2="18" stroke="#5DADE2" stroke-width="2.5"/><circle cx="30" cy="7" r="3" fill="#F2A541"/></svg>`,
-    // Penguin
-    `<svg viewBox="0 0 60 60" fill="none"><ellipse cx="30" cy="34" rx="20" ry="22" fill="#3D3229"/><ellipse cx="30" cy="38" rx="13" ry="16" fill="white"/><circle cx="23" cy="28" r="3" fill="white"/><circle cx="37" cy="28" r="3" fill="white"/><circle cx="23" cy="28" r="1.8" fill="#3D3229"/><circle cx="37" cy="28" r="1.8" fill="#3D3229"/><path d="M27 35L30 38L33 35" fill="#F2A541"/><path d="M10 30Q6 40 14 48" stroke="#3D3229" stroke-width="4" stroke-linecap="round"/><path d="M50 30Q54 40 46 48" stroke="#3D3229" stroke-width="4" stroke-linecap="round"/></svg>`,
-    // Bee
-    `<svg viewBox="0 0 60 60" fill="none"><ellipse cx="30" cy="34" rx="20" ry="18" fill="#F7C97E"/><rect x="10" y="28" width="40" height="6" fill="#3D3229"/><rect x="10" y="38" width="40" height="6" rx="3" fill="#3D3229"/><circle cx="22" cy="28" r="4" fill="white"/><circle cx="38" cy="28" r="4" fill="white"/><circle cx="22" cy="28" r="2" fill="#3D3229"/><circle cx="38" cy="28" r="2" fill="#3D3229"/><path d="M27 40Q30 43 33 40" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="18" cy="14" rx="8" ry="5" fill="white" opacity="0.5" transform="rotate(-20 18 14)"/><ellipse cx="42" cy="14" rx="8" ry="5" fill="white" opacity="0.5" transform="rotate(20 42 14)"/></svg>`,
-    // Dino
-    `<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="32" r="24" fill="#A8C5A0"/><path d="M22 8L24 16M30 6L30 14M38 8L36 16" stroke="#7BA370" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="30" r="4" fill="white"/><circle cx="38" cy="30" r="4" fill="white"/><circle cx="23" cy="30" r="2" fill="#3D3229"/><circle cx="39" cy="30" r="2" fill="#3D3229"/><path d="M22 42Q30 48 38 42" stroke="#3D3229" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="44" r="1" fill="white"/><circle cx="30" cy="45" r="1" fill="white"/><circle cx="36" cy="44" r="1" fill="white"/></svg>`,
-    // Star creature
-    `<svg viewBox="0 0 60 60" fill="none"><path d="M30 4L36 22H54L40 32L44 50L30 40L16 50L20 32L6 22H24L30 4Z" fill="#F2A541" opacity="0.3"/><circle cx="30" cy="32" r="18" fill="#F7C97E"/><circle cx="24" cy="30" r="2.5" fill="#3D3229"/><circle cx="36" cy="30" r="2.5" fill="#3D3229"/><path d="M26 36Q30 40 34 36" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="34" r="3" fill="#E8A0BF" opacity="0.3"/><circle cx="40" cy="34" r="3" fill="#E8A0BF" opacity="0.3"/></svg>`,
-    // Mushroom
-    `<svg viewBox="0 0 60 60" fill="none"><path d="M8 30Q8 10 30 10Q52 10 52 30Z" fill="#E8694A"/><circle cx="20" cy="20" r="4" fill="white" opacity="0.6"/><circle cx="36" cy="16" r="3" fill="white" opacity="0.6"/><circle cx="42" cy="24" r="2.5" fill="white" opacity="0.6"/><rect x="22" y="30" width="16" height="20" rx="6" fill="#F5EDE0"/><circle cx="26" cy="38" r="2" fill="#3D3229"/><circle cx="34" cy="38" r="2" fill="#3D3229"/><path d="M28 44Q30 46 32 44" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-    // Cactus
-    `<svg viewBox="0 0 60 60" fill="none"><rect x="22" y="10" width="16" height="42" rx="8" fill="#7BA370"/><rect x="4" y="24" width="22" height="12" rx="6" fill="#7BA370"/><path d="M4 30V22C4 22 4 18 10 18" stroke="#7BA370" stroke-width="4" stroke-linecap="round"/><rect x="34" y="18" width="20" height="12" rx="6" fill="#7BA370"/><path d="M54 24V16C54 16 54 12 48 12" stroke="#7BA370" stroke-width="4" stroke-linecap="round"/><circle cx="27" cy="32" r="2" fill="#3D3229"/><circle cx="33" cy="32" r="2" fill="#3D3229"/><path d="M28 38Q30 40 32 38" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/><circle cx="26" cy="36" r="3" fill="#E8A0BF" opacity="0.25"/><circle cx="34" cy="36" r="3" fill="#E8A0BF" opacity="0.25"/></svg>`
+const AVATAR_SVGS=[
+`<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="28" fill="#F2A541"/><path d="M14 18L22 28V18L30 28L38 18V28L46 18V36C46 44 38 50 30 50C22 50 14 44 14 36V18Z" fill="#E8694A"/><circle cx="22" cy="34" r="3" fill="#3D3229"/><circle cx="38" cy="34" r="3" fill="#3D3229"/><ellipse cx="30" cy="40" rx="4" ry="2.5" fill="#3D3229"/><circle cx="21" cy="33" r="1" fill="white"/><circle cx="37" cy="33" r="1" fill="white"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="28" fill="#C3AED6"/><path d="M14 16L20 30H14V42C14 48 22 54 30 54C38 54 46 48 46 42V30H40L46 16L36 26H24L14 16Z" fill="#A08CB5"/><circle cx="22" cy="36" r="3" fill="#3D3229"/><circle cx="38" cy="36" r="3" fill="#3D3229"/><path d="M27 41Q30 44 33 41" stroke="#3D3229" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="36" x2="20" y2="37" stroke="#A08CB5" stroke-width="1.5"/><line x1="12" y1="40" x2="20" y2="39" stroke="#A08CB5" stroke-width="1.5"/><line x1="40" y1="37" x2="48" y2="36" stroke="#A08CB5" stroke-width="1.5"/><line x1="40" y1="39" x2="48" y2="40" stroke="#A08CB5" stroke-width="1.5"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="34" r="24" fill="#CD9B6D"/><circle cx="14" cy="16" r="8" fill="#CD9B6D"/><circle cx="14" cy="16" r="5" fill="#E8B88A"/><circle cx="46" cy="16" r="8" fill="#CD9B6D"/><circle cx="46" cy="16" r="5" fill="#E8B88A"/><circle cx="22" cy="32" r="3" fill="#3D3229"/><circle cx="38" cy="32" r="3" fill="#3D3229"/><ellipse cx="30" cy="38" rx="5" ry="4" fill="#E8B88A"/><ellipse cx="30" cy="37" rx="2.5" ry="2" fill="#3D3229"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="36" r="22" fill="#F5EDE0"/><ellipse cx="20" cy="10" rx="6" ry="16" fill="#F5EDE0" stroke="#E8A0BF" stroke-width="1"/><ellipse cx="20" cy="10" rx="3" ry="12" fill="#E8A0BF" opacity="0.3"/><ellipse cx="40" cy="10" rx="6" ry="16" fill="#F5EDE0" stroke="#E8A0BF" stroke-width="1"/><ellipse cx="40" cy="10" rx="3" ry="12" fill="#E8A0BF" opacity="0.3"/><circle cx="23" cy="34" r="2.5" fill="#3D3229"/><circle cx="37" cy="34" r="2.5" fill="#3D3229"/><ellipse cx="30" cy="39" rx="2" ry="1.5" fill="#E8A0BF"/><path d="M26 42Q30 46 34 42" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="32" r="24" fill="#8B7355"/><path d="M12 14L20 24H40L48 14" stroke="#8B7355" stroke-width="4" stroke-linecap="round"/><circle cx="22" cy="32" r="8" fill="#FDF6EC"/><circle cx="38" cy="32" r="8" fill="#FDF6EC"/><circle cx="22" cy="32" r="4" fill="#3D3229"/><circle cx="38" cy="32" r="4" fill="#3D3229"/><circle cx="21" cy="31" r="1.5" fill="white"/><circle cx="37" cy="31" r="1.5" fill="white"/><path d="M28 40L30 43L32 40" fill="#F2A541"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="32" r="24" fill="white"/><ellipse cx="16" cy="16" rx="8" ry="7" fill="#3D3229"/><ellipse cx="44" cy="16" rx="8" ry="7" fill="#3D3229"/><ellipse cx="22" cy="30" rx="8" ry="7" fill="#3D3229" opacity="0.8"/><ellipse cx="38" cy="30" rx="8" ry="7" fill="#3D3229" opacity="0.8"/><circle cx="22" cy="30" r="3" fill="white"/><circle cx="38" cy="30" r="3" fill="white"/><circle cx="22" cy="29" r="1.5" fill="#3D3229"/><circle cx="38" cy="29" r="1.5" fill="#3D3229"/><ellipse cx="30" cy="38" rx="3" ry="2" fill="#3D3229"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><ellipse cx="30" cy="36" rx="24" ry="20" fill="#7BA370"/><circle cx="18" cy="18" r="10" fill="#A8C5A0"/><circle cx="42" cy="18" r="10" fill="#A8C5A0"/><circle cx="18" cy="17" r="5" fill="white"/><circle cx="42" cy="17" r="5" fill="white"/><circle cx="18" cy="17" r="3" fill="#3D3229"/><circle cx="42" cy="17" r="3" fill="#3D3229"/><path d="M20 40Q30 48 40 40" stroke="#3D3229" stroke-width="2" stroke-linecap="round"/><circle cx="30" cy="32" r="1.5" fill="#3D3229"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="28" fill="#F2A541"/><circle cx="30" cy="30" r="28" stroke="#E8694A" stroke-width="3" stroke-dasharray="4 3"/><circle cx="30" cy="34" r="18" fill="#F7C97E"/><circle cx="23" cy="32" r="3" fill="#3D3229"/><circle cx="37" cy="32" r="3" fill="#3D3229"/><ellipse cx="30" cy="38" rx="4" ry="2.5" fill="#E8694A"/><path d="M26 42Q30 46 34 42" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="34" r="22" fill="white"/><path d="M30 2L34 18H26L30 2Z" fill="#F2A541"/><path d="M18 14C10 16 8 22 10 26" stroke="#E8A0BF" stroke-width="3" stroke-linecap="round"/><path d="M42 14C50 16 52 22 50 26" stroke="#C3AED6" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="34" r="2.5" fill="#3D3229"/><circle cx="37" cy="34" r="2.5" fill="#3D3229"/><path d="M27 40Q30 43 33 40" stroke="#E8A0BF" stroke-width="1.5" stroke-linecap="round"/><circle cx="18" cy="36" r="4" fill="#E8A0BF" opacity="0.2"/><circle cx="42" cy="36" r="4" fill="#C3AED6" opacity="0.2"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><rect x="10" y="18" width="40" height="34" rx="10" fill="#5DADE2"/><rect x="16" y="24" width="12" height="8" rx="3" fill="white"/><rect x="32" y="24" width="12" height="8" rx="3" fill="white"/><circle cx="22" cy="28" r="2.5" fill="#3D3229"/><circle cx="38" cy="28" r="2.5" fill="#3D3229"/><rect x="22" y="38" width="16" height="4" rx="2" fill="white"/><line x1="26" y1="38" x2="26" y2="42" stroke="#5DADE2" stroke-width="1.5"/><line x1="30" y1="38" x2="30" y2="42" stroke="#5DADE2" stroke-width="1.5"/><line x1="34" y1="38" x2="34" y2="42" stroke="#5DADE2" stroke-width="1.5"/><line x1="30" y1="8" x2="30" y2="18" stroke="#5DADE2" stroke-width="2.5"/><circle cx="30" cy="7" r="3" fill="#F2A541"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><ellipse cx="30" cy="34" rx="20" ry="22" fill="#3D3229"/><ellipse cx="30" cy="38" rx="13" ry="16" fill="white"/><circle cx="23" cy="28" r="3" fill="white"/><circle cx="37" cy="28" r="3" fill="white"/><circle cx="23" cy="28" r="1.8" fill="#3D3229"/><circle cx="37" cy="28" r="1.8" fill="#3D3229"/><path d="M27 35L30 38L33 35" fill="#F2A541"/><path d="M10 30Q6 40 14 48" stroke="#3D3229" stroke-width="4" stroke-linecap="round"/><path d="M50 30Q54 40 46 48" stroke="#3D3229" stroke-width="4" stroke-linecap="round"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><ellipse cx="30" cy="34" rx="20" ry="18" fill="#F7C97E"/><rect x="10" y="28" width="40" height="6" fill="#3D3229"/><rect x="10" y="38" width="40" height="6" rx="3" fill="#3D3229"/><circle cx="22" cy="28" r="4" fill="white"/><circle cx="38" cy="28" r="4" fill="white"/><circle cx="22" cy="28" r="2" fill="#3D3229"/><circle cx="38" cy="28" r="2" fill="#3D3229"/><path d="M27 40Q30 43 33 40" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="18" cy="14" rx="8" ry="5" fill="white" opacity="0.5" transform="rotate(-20 18 14)"/><ellipse cx="42" cy="14" rx="8" ry="5" fill="white" opacity="0.5" transform="rotate(20 42 14)"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="32" r="24" fill="#A8C5A0"/><path d="M22 8L24 16M30 6L30 14M38 8L36 16" stroke="#7BA370" stroke-width="3" stroke-linecap="round"/><circle cx="22" cy="30" r="4" fill="white"/><circle cx="38" cy="30" r="4" fill="white"/><circle cx="23" cy="30" r="2" fill="#3D3229"/><circle cx="39" cy="30" r="2" fill="#3D3229"/><path d="M22 42Q30 48 38 42" stroke="#3D3229" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="44" r="1" fill="white"/><circle cx="30" cy="45" r="1" fill="white"/><circle cx="36" cy="44" r="1" fill="white"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><path d="M30 4L36 22H54L40 32L44 50L30 40L16 50L20 32L6 22H24L30 4Z" fill="#F2A541" opacity="0.3"/><circle cx="30" cy="32" r="18" fill="#F7C97E"/><circle cx="24" cy="30" r="2.5" fill="#3D3229"/><circle cx="36" cy="30" r="2.5" fill="#3D3229"/><path d="M26 36Q30 40 34 36" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="34" r="3" fill="#E8A0BF" opacity="0.3"/><circle cx="40" cy="34" r="3" fill="#E8A0BF" opacity="0.3"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><path d="M8 30Q8 10 30 10Q52 10 52 30Z" fill="#E8694A"/><circle cx="20" cy="20" r="4" fill="white" opacity="0.6"/><circle cx="36" cy="16" r="3" fill="white" opacity="0.6"/><circle cx="42" cy="24" r="2.5" fill="white" opacity="0.6"/><rect x="22" y="30" width="16" height="20" rx="6" fill="#F5EDE0"/><circle cx="26" cy="38" r="2" fill="#3D3229"/><circle cx="34" cy="38" r="2" fill="#3D3229"/><path d="M28 44Q30 46 32 44" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+`<svg viewBox="0 0 60 60" fill="none"><rect x="22" y="10" width="16" height="42" rx="8" fill="#7BA370"/><rect x="4" y="24" width="22" height="12" rx="6" fill="#7BA370"/><path d="M4 30V22C4 22 4 18 10 18" stroke="#7BA370" stroke-width="4" stroke-linecap="round"/><rect x="34" y="18" width="20" height="12" rx="6" fill="#7BA370"/><path d="M54 24V16C54 16 54 12 48 12" stroke="#7BA370" stroke-width="4" stroke-linecap="round"/><circle cx="27" cy="32" r="2" fill="#3D3229"/><circle cx="33" cy="32" r="2" fill="#3D3229"/><path d="M28 38Q30 40 32 38" stroke="#3D3229" stroke-width="1.5" stroke-linecap="round"/><circle cx="26" cy="36" r="3" fill="#E8A0BF" opacity="0.25"/><circle cx="34" cy="36" r="3" fill="#E8A0BF" opacity="0.25"/></svg>`
 ];
 
-const SUGGESTIONS = {
-    daily: [
-        'קמתי לפני השעון מעורר',
-        'סידרתי את החדר בבוקר',
-        'אכלתי ארוחת בוקר בריאה',
-        'הכנתי את התיק מהערב',
-        'הגעתי בזמן לבית הספר',
-        'שתיתי 6 כוסות מים היום',
-        'הלכתי לישון לפני 21:30',
-        'עזרתי בבית בלי שביקשו',
-        'קראתי לפחות 15 דקות',
-        'יצאתי לפעילות בחוץ',
-        'לא השתמשתי במסכים שעה לפני השינה',
-        'הכנתי כריך לבד',
-    ],
-    social: [
-        'אמרתי מילה טובה לחבר/ה',
-        'עזרתי למישהו שהתקשה',
-        'שיחקתי עם מישהו חדש בהפסקה',
-        'הקשבתי לחבר שהיה עצוב',
-        'שיתפתי במשהו שלי',
-        'אמרתי תודה למישהו',
-        'פתרתי ויכוח בדרכי שלום',
-        'הזמנתי מישהו להצטרף למשחק',
-        'כתבתי מכתב או הודעה נחמדה',
-        'חייכתי למישהו שנראה עצוב',
-        'ביקשתי סליחה כשטעיתי',
-        'שאלתי מישהו מה שלומו',
-    ],
-    school: [
-        'הרמתי יד בשיעור',
-        'סיימתי שיעורי בית בזמן',
-        'שאלתי שאלה בכיתה',
-        'עזרתי לחבר בלימודים',
-        'ארגנתי את המחברות',
-        'הכנתי סיכום של שיעור',
-        'השתתפתי בדיון כיתתי',
-        'למדתי משהו חדש והסברתי לאחר',
-        'קראתי חומר נוסף מעבר לנדרש',
-        'התחלתי פרויקט לפני הדדליין',
-        'כתבתי יומן למידה',
-        'ניסיתי לפתור תרגיל קשה לבד',
-    ],
-    fun: [
-        'צחקתי מאוד היום',
-        'ניסיתי אוכל חדש',
-        'ציירתי או יצרתי משהו',
-        'שרתי או ניגנתי מוזיקה',
-        'למדתי מילה חדשה',
-        'סיפרתי בדיחה',
-        'שיחקתי בחוץ עם חברים',
-        'בישלתי או אפיתי משהו',
-        'צפיתי בשקיעה או זריחה',
-        'גיליתי עובדה מעניינת',
-        'עשיתי משהו שמעולם לא עשיתי',
-        'כתבתי שיר או סיפור',
-    ],
-    values: [
-        'אספתי זבל מהרצפה',
-        'חסכתי מים או חשמל',
-        'תרמתי משהו שלא צריך',
-        'דיברתי עם סבא או סבתא',
-        'עשיתי מעשה טוב בסתר',
-        'הייתי סבלני במצב מעצבן',
-        'ויתרתי על משהו למען אחר',
-        'אמרתי אמת גם כשזה היה קשה',
-        'כיבדתי את התור',
-        'שמרתי על ניקיון הכיתה',
-        'עודדתי מישהו שנכשל',
-        'הקפדתי על ברכת המזון',
-    ]
+const SUGGESTIONS={
+daily:['קמתי לפני השעון מעורר','סידרתי את החדר בבוקר','אכלתי ארוחת בוקר בריאה','הכנתי את התיק מהערב','הגעתי בזמן לבית הספר','שתיתי 6 כוסות מים היום','הלכתי לישון לפני 21:30','עזרתי בבית בלי שביקשו','קראתי לפחות 15 דקות','יצאתי לפעילות בחוץ','לא השתמשתי במסכים שעה לפני השינה','הכנתי כריך לבד'],
+social:['אמרתי מילה טובה לחבר/ה','עזרתי למישהו שהתקשה','שיחקתי עם מישהו חדש בהפסקה','הקשבתי לחבר שהיה עצוב','שיתפתי במשהו שלי','אמרתי תודה למישהו','פתרתי ויכוח בדרכי שלום','הזמנתי מישהו להצטרף למשחק','כתבתי מכתב או הודעה נחמדה','חייכתי למישהו שנראה עצוב','ביקשתי סליחה כשטעיתי','שאלתי מישהו מה שלומו'],
+school:['הרמתי יד בשיעור','סיימתי שיעורי בית בזמן','שאלתי שאלה בכיתה','עזרתי לחבר בלימודים','ארגנתי את המחברות','הכנתי סיכום של שיעור','השתתפתי בדיון כיתתי','למדתי משהו חדש והסברתי לאחר','קראתי חומר נוסף מעבר לנדרש','התחלתי פרויקט לפני הדדליין','כתבתי יומן למידה','ניסיתי לפתור תרגיל קשה לבד'],
+fun:['צחקתי מאוד היום','ניסיתי אוכל חדש','ציירתי או יצרתי משהו','שרתי או ניגנתי מוזיקה','למדתי מילה חדשה','סיפרתי בדיחה','שיחקתי בחוץ עם חברים','בישלתי או אפיתי משהו','צפיתי בשקיעה או זריחה','גיליתי עובדה מעניינת','עשיתי משהו שמעולם לא עשיתי','כתבתי שיר או סיפור'],
+values:['אספתי זבל מהרצפה','חסכתי מים או חשמל','תרמתי משהו שלא צריך','דיברתי עם סבא או סבתא','עשיתי מעשה טוב בסתר','הייתי סבלני במצב מעצבן','ויתרתי על משהו למען אחר','אמרתי אמת גם כשזה היה קשה','כיבדתי את התור','שמרתי על ניקיון הכיתה','עודדתי מישהו שנכשל','הקפדתי על ברכת המזון']
 };
 
-let currentGame = null;
-let currentPlayer = null;
-let statements = [];
-let selectedAvatarIdx = 0;
+let currentGame=null,currentPlayer=null,statements=[],selectedAvatarIdx=0;
 
-// ===== INIT =====
-function init() {
-    renderAvatars();
-    showSuggestionCategory('daily', document.querySelector('.tab.active'));
-    checkUrlParams();
+function init(){renderAvatars();showSuggestionCategory('daily',document.querySelector('.tab.active'));checkUrlParams()}
+
+function checkUrlParams(){
+    const p=new URLSearchParams(window.location.search),code=p.get('code'),role=p.get('role');
+    if(code&&role==='teacher'){const g=getGameByCode(code);if(g){currentGame=g;showTeacherDashboard();return}}
+    if(code){document.getElementById('joinCode').value=code;showScreen('studentJoin')}
 }
 
-function checkUrlParams() {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    const role = params.get('role');
-    if (code && role === 'teacher') {
-        const game = getGameByCode(code);
-        if (game) { currentGame = game; showTeacherDashboard(); return; }
-    }
-    if (code) {
-        document.getElementById('joinCode').value = code;
-        showScreen('studentJoin');
-    }
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+
+function addStatement(text){
+    const input=document.getElementById('newStatement'),value=text||input.value.trim();
+    if(!value)return;if(statements.includes(value)){showToast('ההיגד כבר קיים');return}
+    statements.push(value);if(!text)input.value='';input.focus();renderStatements();
 }
 
-// ===== SCREENS =====
-function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    window.scrollTo(0, 0);
+function removeStatement(i){statements.splice(i,1);renderStatements();renderSuggestions()}
+
+function renderStatements(){
+    const list=document.getElementById('statementsList'),size=parseInt(document.getElementById('boardSize').value);
+    const needed=size*size-(document.getElementById('freeCenter').checked&&size%2===1?1:0);
+    list.innerHTML=statements.map((s,i)=>`<li class="statement-item"><span>${s}</span><button class="remove-btn" onclick="removeStatement(${i})"><svg viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></li>`).join('');
+    const c=document.getElementById('statementCount');c.textContent=`${statements.length} / ${needed} היגדים`;c.classList.toggle('enough',statements.length>=needed);
 }
 
-// ===== STATEMENTS =====
-function addStatement(text) {
-    const input = document.getElementById('newStatement');
-    const value = text || input.value.trim();
-    if (!value) return;
-    if (statements.includes(value)) { showToast('ההיגד כבר קיים'); return; }
-    statements.push(value);
-    if (!text) input.value = '';
-    input.focus();
-    renderStatements();
+let currentSuggestionCategory='daily';
+function showSuggestionCategory(cat,tabEl){currentSuggestionCategory=cat;document.querySelectorAll('#suggestionTabs .tab').forEach(t=>t.classList.remove('active'));if(tabEl)tabEl.classList.add('active');renderSuggestions()}
+
+function renderSuggestions(){
+    const container=document.getElementById('suggestionsContainer'),items=SUGGESTIONS[currentSuggestionCategory]||[];
+    container.innerHTML=items.map(s=>{const added=statements.includes(s);return`<button class="suggestion-chip ${added?'added':''}" onclick="${added?'':`addSuggestion('${s.replace(/'/g,"\\'")}')`}" ${added?'disabled':''}>${added?'\u2713 ':'+ '}${s}</button>`}).join('');
 }
+function addSuggestion(text){addStatement(text);renderSuggestions()}
 
-function removeStatement(index) {
-    statements.splice(index, 1);
-    renderStatements();
-    renderSuggestions();
+function generateCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';for(let i=0;i<5;i++)code+=c[Math.floor(Math.random()*c.length)];return code}
+
+function createGame(){
+    const name=document.getElementById('gameName').value.trim();if(!name){showToast('נא להזין שם למשחק');return}
+    const size=parseInt(document.getElementById('boardSize').value),freeCenter=document.getElementById('freeCenter').checked&&size%2===1;
+    const needed=size*size-(freeCenter?1:0);if(statements.length<needed){showToast(`צריך לפחות ${needed} היגדים (יש ${statements.length})`);return}
+    const duration=parseInt(document.getElementById('gameDuration').value)||7,code=generateCode(),now=Date.now();
+    const game={id:'game_'+now,code,name,size,freeCenter,statements:[...statements],duration,createdAt:now,endsAt:now+duration*86400000,
+        prizes:{row:document.getElementById('prizeRow').value.trim()||'פטור משיעורי בית',twoLines:document.getElementById('prizeTwoLines').value.trim()||'בחירת סרט לכיתה',threeLines:document.getElementById('prizeThreeLines').value.trim()||'ישיבה חופשית ליום',full:document.getElementById('prizeFull').value.trim()||'תעודת הוקרה מיוחדת'},
+        players:{},ended:false};
+    saveGame(game);currentGame=game;
+    localStorage.setItem('bingo_session',JSON.stringify({gameCode:code,role:'teacher'}));
+    document.getElementById('gameCodeDisplay').textContent=code;
+    document.getElementById('gameLinkInput').value=window.location.origin+window.location.pathname+'?code='+code;
+    document.getElementById('durationDisplay').textContent=duration;
+    showScreen('gameCreated');launchConfetti();
 }
+function copyGameLink(){const i=document.getElementById('gameLinkInput');i.select();navigator.clipboard.writeText(i.value).then(()=>showToast('הקישור הועתק!'))}
 
-function renderStatements() {
-    const list = document.getElementById('statementsList');
-    const size = parseInt(document.getElementById('boardSize').value);
-    const needed = size * size - (document.getElementById('freeCenter').checked && size % 2 === 1 ? 1 : 0);
-    list.innerHTML = statements.map((s, i) => `
-        <li class="statement-item">
-            <span>${s}</span>
-            <button class="remove-btn" onclick="removeStatement(${i})">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-            </button>
-        </li>
-    `).join('');
-    const c = document.getElementById('statementCount');
-    c.textContent = `${statements.length} / ${needed} היגדים`;
-    c.classList.toggle('enough', statements.length >= needed);
-}
-
-// ===== SUGGESTIONS =====
-let currentSuggestionCategory = 'daily';
-
-function showSuggestionCategory(cat, tabEl) {
-    currentSuggestionCategory = cat;
-    document.querySelectorAll('#suggestionTabs .tab').forEach(t => t.classList.remove('active'));
-    if (tabEl) tabEl.classList.add('active');
-    renderSuggestions();
-}
-
-function renderSuggestions() {
-    const container = document.getElementById('suggestionsContainer');
-    const items = SUGGESTIONS[currentSuggestionCategory] || [];
-    container.innerHTML = items.map(s => {
-        const added = statements.includes(s);
-        return `<button class="suggestion-chip ${added ? 'added' : ''}"
-            onclick="${added ? '' : `addSuggestion('${s.replace(/'/g, "\\'")}')`}"
-            ${added ? 'disabled' : ''}>
-            ${added ? '\u2713 ' : '+ '}${s}
-        </button>`;
-    }).join('');
-}
-
-function addSuggestion(text) { addStatement(text); renderSuggestions(); }
-
-// ===== CREATE GAME =====
-function generateCode() {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let code = '';
-    for (let i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)];
-    return code;
-}
-
-function createGame() {
-    const name = document.getElementById('gameName').value.trim();
-    if (!name) { showToast('נא להזין שם למשחק'); return; }
-    const size = parseInt(document.getElementById('boardSize').value);
-    const freeCenter = document.getElementById('freeCenter').checked && size % 2 === 1;
-    const needed = size * size - (freeCenter ? 1 : 0);
-    if (statements.length < needed) { showToast(`צריך לפחות ${needed} היגדים (יש ${statements.length})`); return; }
-
-    const duration = parseInt(document.getElementById('gameDuration').value) || 7;
-    const code = generateCode();
-    const now = Date.now();
-
-    const game = {
-        id: 'game_' + now, code, name, size, freeCenter,
-        statements: [...statements],
-        duration, createdAt: now, endsAt: now + duration * 86400000,
-        prizes: {
-            row: document.getElementById('prizeRow').value.trim() || 'פטור משיעורי בית',
-            twoLines: document.getElementById('prizeTwoLines').value.trim() || 'בחירת סרט לכיתה',
-            threeLines: document.getElementById('prizeThreeLines').value.trim() || 'ישיבה חופשית ליום',
-            full: document.getElementById('prizeFull').value.trim() || 'תעודת הוקרה מיוחדת'
-        },
-        players: {}, ended: false
-    };
-
-    saveGame(game);
-    currentGame = game;
-
-    localStorage.setItem('bingo_session', JSON.stringify({ gameCode: code, role: 'teacher' }));
-
-    document.getElementById('gameCodeDisplay').textContent = code;
-    const baseUrl = window.location.origin + window.location.pathname;
-    document.getElementById('gameLinkInput').value = baseUrl + '?code=' + code;
-    document.getElementById('durationDisplay').textContent = duration;
-
-    showScreen('gameCreated');
-    launchConfetti();
-}
-
-function copyGameLink() {
-    const input = document.getElementById('gameLinkInput');
-    input.select();
-    navigator.clipboard.writeText(input.value).then(() => showToast('הקישור הועתק!'));
-}
-
-// ===== TEACHER DASHBOARD =====
-function showTeacherDashboard() {
-    if (!currentGame) return;
-    const game = getGameByCode(currentGame.code) || currentGame;
-    currentGame = game;
-
-    document.getElementById('dashGameName').textContent = game.name;
-    document.getElementById('dashGameCode').textContent = game.code;
-
-    const players = Object.values(game.players || {});
-    document.getElementById('statPlayers').textContent = players.length;
-
-    let completedLines = 0, fullBingos = 0;
-    players.forEach(p => {
-        if (p.achievements && p.achievements.length > 0) completedLines++;
-        if (p.achievements && p.achievements.includes('full')) fullBingos++;
-    });
-    document.getElementById('statCompleted').textContent = completedLines;
-    document.getElementById('statFullBingo').textContent = fullBingos;
-
-    const daysLeft = Math.max(0, Math.ceil((game.endsAt - Date.now()) / 86400000));
-    document.getElementById('statDaysLeft').textContent = game.ended ? 0 : daysLeft;
-
-    const list = document.getElementById('playersList');
-    if (players.length === 0) {
-        list.innerHTML = '<li class="text-center text-muted" style="padding:30px">עדיין אין שחקנים</li>';
-    } else {
-        list.innerHTML = players.map(p => {
-            const marked = (p.marked || []).filter(Boolean).length;
-            const total = game.size * game.size;
-            const achCount = (p.achievements || []).length;
-            let badge = '';
-            if (p.achievements && p.achievements.includes('full')) {
-                badge = '<span class="badge badge-bingo">בינגו מלא!</span>';
-            } else if (achCount > 0) {
-                badge = `<span class="badge badge-row">${achCount} הישגים</span>`;
-            }
-            return `<li class="player-list-item">
-                <div class="pl-info">
-                    <div class="pl-av">${AVATAR_SVGS[p.avatarIdx || 0]}</div>
-                    <div>
-                        <strong>${p.name}</strong>
-                        <div class="pl-progress">${marked}/${total} סומנו</div>
-                    </div>
-                </div>
-                ${badge}
-            </li>`;
-        }).join('');
-    }
-
+function showTeacherDashboard(){
+    if(!currentGame)return;const game=getGameByCode(currentGame.code)||currentGame;currentGame=game;
+    document.getElementById('dashGameName').textContent=game.name;document.getElementById('dashGameCode').textContent=game.code;
+    const players=Object.values(game.players||{});document.getElementById('statPlayers').textContent=players.length;
+    let cl=0,fb=0;players.forEach(p=>{if(p.achievements&&p.achievements.length>0)cl++;if(p.achievements&&p.achievements.includes('full'))fb++});
+    document.getElementById('statCompleted').textContent=cl;document.getElementById('statFullBingo').textContent=fb;
+    document.getElementById('statDaysLeft').textContent=game.ended?0:Math.max(0,Math.ceil((game.endsAt-Date.now())/86400000));
+    const list=document.getElementById('playersList');
+    if(players.length===0){list.innerHTML='<li class="text-center text-muted" style="padding:30px">עדיין אין שחקנים</li>'}
+    else{list.innerHTML=players.map(p=>{const marked=(p.marked||[]).filter(Boolean).length,total=game.size*game.size,ac=(p.achievements||[]).length;
+        let badge='';if(p.achievements&&p.achievements.includes('full'))badge='<span class="badge badge-bingo">בינגו מלא!</span>';else if(ac>0)badge=`<span class="badge badge-row">${ac} הישגים</span>`;
+        return`<li class="player-list-item"><div class="pl-info"><div class="pl-av">${AVATAR_SVGS[p.avatarIdx||0]}</div><div><strong>${p.name}</strong><div class="pl-progress">${marked}/${total} סומנו</div></div></div>${badge}</li>`}).join('')}
     showScreen('teacherDashboard');
 }
+function endGameEarly(){if(!currentGame)return;if(!confirm('בטוח שרוצים לסיים את המשחק?'))return;currentGame.ended=true;currentGame.endsAt=Date.now();saveGame(currentGame);showTeacherDashboard();showToast('המשחק הסתיים')}
 
-function endGameEarly() {
-    if (!currentGame) return;
-    if (!confirm('בטוח שרוצים לסיים את המשחק?')) return;
-    currentGame.ended = true;
-    currentGame.endsAt = Date.now();
-    saveGame(currentGame);
-    showTeacherDashboard();
-    showToast('המשחק הסתיים');
+function renderAvatars(){document.getElementById('avatarSelector').innerHTML=AVATAR_SVGS.map((svg,i)=>`<div class="avatar-option ${i===selectedAvatarIdx?'selected':''}" onclick="selectAvatar(${i},this)">${svg}</div>`).join('')}
+function selectAvatar(idx,el){selectedAvatarIdx=idx;document.querySelectorAll('.avatar-option').forEach(a=>a.classList.remove('selected'));el.classList.add('selected')}
+
+function joinGame(){
+    const code=document.getElementById('joinCode').value.trim().toUpperCase(),name=document.getElementById('playerName').value.trim();
+    if(!code){showToast('נא להזין קוד משחק');return}if(!name){showToast('נא להזין את השם שלך');return}
+    const game=getGameByCode(code);if(!game){showToast('קוד משחק לא נמצא');return}
+    if(game.ended||Date.now()>game.endsAt){showToast('המשחק הזה כבר הסתיים');return}
+    const playerId='player_'+name.replace(/\s/g,'_')+'_'+code;
+    if(game.players[playerId]){currentGame=game;currentPlayer={...game.players[playerId],id:playerId};renderBoard();showScreen('bingoBoard');showToast(`ברוך שובך, ${name}!`);return}
+    const board=generateBoard(game);
+    const player={id:playerId,name,avatarIdx:selectedAvatarIdx,board,marked:new Array(game.size*game.size).fill(false),achievements:[],joinedAt:Date.now()};
+    if(game.freeCenter)player.marked[Math.floor(game.size*game.size/2)]=true;
+    game.players[playerId]=player;saveGame(game);currentGame=game;currentPlayer=player;
+    localStorage.setItem('bingo_session',JSON.stringify({gameCode:code,playerId,role:'student'}));
+    renderBoard();showScreen('bingoBoard');showToast(`ברוכים הבאים, ${name}!`);
 }
 
-// ===== AVATARS =====
-function renderAvatars() {
-    const container = document.getElementById('avatarSelector');
-    container.innerHTML = AVATAR_SVGS.map((svg, i) =>
-        `<div class="avatar-option ${i === selectedAvatarIdx ? 'selected' : ''}" onclick="selectAvatar(${i}, this)">${svg}</div>`
-    ).join('');
+function generateBoard(game){
+    const total=game.size*game.size,needed=total-(game.freeCenter?1:0);
+    const shuffled=[...game.statements].sort(()=>Math.random()-0.5).slice(0,needed);
+    const board=[];let idx=0;const center=Math.floor(total/2);
+    for(let i=0;i<total;i++){if(game.freeCenter&&i===center)board.push('מתנה!');else board.push(shuffled[idx++])}return board;
 }
 
-function selectAvatar(idx, el) {
-    selectedAvatarIdx = idx;
-    document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
-    el.classList.add('selected');
+function renderBoard(){
+    if(!currentGame||!currentPlayer)return;const game=currentGame,player=currentPlayer,size=game.size;
+    document.getElementById('boardAvatarWrap').innerHTML=AVATAR_SVGS[player.avatarIdx||0].replace(/viewBox/,'style="width:34px;height:34px" viewBox');
+    document.getElementById('boardPlayerName').textContent=player.name;document.getElementById('boardGameName').textContent=game.name;
+    const isEnded=game.ended||Date.now()>game.endsAt,daysLeft=Math.max(0,Math.ceil((game.endsAt-Date.now())/86400000));
+    document.getElementById('daysRemaining').textContent=isEnded?'הסתיים':`${daysLeft} ימים נותרו`;
+    document.getElementById('gameEndedBanner').classList.toggle('hidden',!isEnded);
+    const grid=document.getElementById('bingoGrid');grid.style.gridTemplateColumns=`repeat(${size},1fr)`;
+    const winLines=getCompletedLines(player,size),winCells=new Set();winLines.forEach(l=>l.forEach(i=>winCells.add(i)));
+    grid.innerHTML=player.board.map((text,i)=>{
+        const isFree=game.freeCenter&&i===Math.floor(size*size/2),isMarked=player.marked[i],isWin=winCells.has(i);
+        let cls='bingo-cell';if(isFree)cls+=' free marked';else if(isMarked)cls+=' marked';if(isWin)cls+=' win-line';
+        return`<div class="${cls}" onclick="${!isFree&&!isEnded?`toggleCell(${i})`:''}">${text}</div>`}).join('');
+    const mc=player.marked.filter(Boolean).length,total=size*size;
+    document.getElementById('progressFill').style.width=Math.round((mc/total)*100)+'%';
+    document.getElementById('progressText').textContent=`${mc} / ${total} משבצות סומנו`;
+    renderAchievements(player,game);
 }
 
-// ===== JOIN GAME =====
-function joinGame() {
-    const code = document.getElementById('joinCode').value.trim().toUpperCase();
-    const name = document.getElementById('playerName').value.trim();
-    if (!code) { showToast('נא להזין קוד משחק'); return; }
-    if (!name) { showToast('נא להזין את השם שלך'); return; }
-
-    const game = getGameByCode(code);
-    if (!game) { showToast('קוד משחק לא נמצא'); return; }
-    if (game.ended || Date.now() > game.endsAt) { showToast('המשחק הזה כבר הסתיים'); return; }
-
-    const playerId = 'player_' + name.replace(/\s/g, '_') + '_' + code;
-
-    if (game.players[playerId]) {
-        currentGame = game;
-        currentPlayer = { ...game.players[playerId], id: playerId };
-        renderBoard();
-        showScreen('bingoBoard');
-        showToast(`ברוך שובך, ${name}!`);
-        return;
-    }
-
-    const board = generateBoard(game);
-    const player = {
-        id: playerId, name, avatarIdx: selectedAvatarIdx,
-        board, marked: new Array(game.size * game.size).fill(false),
-        achievements: [], joinedAt: Date.now()
-    };
-
-    if (game.freeCenter) {
-        player.marked[Math.floor(game.size * game.size / 2)] = true;
-    }
-
-    game.players[playerId] = player;
-    saveGame(game);
-    currentGame = game;
-    currentPlayer = player;
-
-    localStorage.setItem('bingo_session', JSON.stringify({ gameCode: code, playerId, role: 'student' }));
-
-    renderBoard();
-    showScreen('bingoBoard');
-    showToast(`ברוכים הבאים, ${name}!`);
+function toggleCell(index){
+    if(!currentGame||!currentPlayer)return;const was=currentPlayer.marked[index];currentPlayer.marked[index]=!was;
+    currentGame.players[currentPlayer.id]=currentPlayer;saveGame(currentGame);
+    localStorage.setItem('bingo_session',JSON.stringify({gameCode:currentGame.code,playerId:currentPlayer.id,role:'student'}));
+    if(!was)checkAchievements();renderBoard();
 }
 
-function generateBoard(game) {
-    const total = game.size * game.size;
-    const needed = total - (game.freeCenter ? 1 : 0);
-    const shuffled = [...game.statements].sort(() => Math.random() - 0.5).slice(0, needed);
-    const board = [];
-    let idx = 0;
-    const center = Math.floor(total / 2);
-    for (let i = 0; i < total; i++) {
-        if (game.freeCenter && i === center) board.push('מתנה!');
-        else board.push(shuffled[idx++]);
-    }
-    return board;
+function getCompletedLines(player,size){
+    const lines=[];
+    for(let r=0;r<size;r++){const row=[];for(let c=0;c<size;c++)row.push(r*size+c);if(row.every(i=>player.marked[i]))lines.push(row)}
+    for(let c=0;c<size;c++){const col=[];for(let r=0;r<size;r++)col.push(r*size+c);if(col.every(i=>player.marked[i]))lines.push(col)}
+    const d1=[],d2=[];for(let i=0;i<size;i++){d1.push(i*size+i);d2.push(i*size+(size-1-i))}
+    if(d1.every(i=>player.marked[i]))lines.push(d1);if(d2.every(i=>player.marked[i]))lines.push(d2);return lines;
 }
 
-// ===== RENDER BOARD =====
-function renderBoard() {
-    if (!currentGame || !currentPlayer) return;
-    const game = currentGame, player = currentPlayer, size = game.size;
-
-    document.getElementById('boardAvatarWrap').innerHTML = AVATAR_SVGS[player.avatarIdx || 0].replace(/viewBox/, 'style="width:34px;height:34px" viewBox');
-    document.getElementById('boardPlayerName').textContent = player.name;
-    document.getElementById('boardGameName').textContent = game.name;
-
-    const isEnded = game.ended || Date.now() > game.endsAt;
-    const daysLeft = Math.max(0, Math.ceil((game.endsAt - Date.now()) / 86400000));
-    document.getElementById('daysRemaining').textContent = isEnded ? 'הסתיים' : `${daysLeft} ימים נותרו`;
-    document.getElementById('gameEndedBanner').classList.toggle('hidden', !isEnded);
-
-    const grid = document.getElementById('bingoGrid');
-    grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-
-    const winLines = getCompletedLines(player, size);
-    const winCells = new Set();
-    winLines.forEach(line => line.forEach(idx => winCells.add(idx)));
-
-    // Deterministic pastel colors per cell based on index
-    const cellColors = [
-        ['#F2A541','#F7C97E'], ['#3AAFA9','#5DADE2'], ['#E8694A','#F2A541'],
-        ['#A8C5A0','#87CEEB'], ['#C3AED6','#E8A0BF'], ['#E8A0BF','#F7C97E'],
-        ['#87CEEB','#C3AED6'], ['#CD9B6D','#E8B88A'], ['#7BA370','#A8C5A0'],
-        ['#5DADE2','#C3AED6']
-    ];
-
-    grid.innerHTML = player.board.map((text, i) => {
-        const isFree = game.freeCenter && i === Math.floor(size * size / 2);
-        const isMarked = player.marked[i];
-        const isWin = winCells.has(i);
-        const colors = cellColors[i % cellColors.length];
-
-        let classes = 'bingo-cell';
-        if (isFree) classes += ' free marked';
-        else if (isMarked) classes += ' marked';
-        if (isWin) classes += ' win-line';
-
-        const hoverBorder = !isMarked && !isFree ? `onmouseenter="this.style.borderColor='${colors[0]}'" onmouseleave="this.style.borderColor=''"` : '';
-        const clickable = !isFree && !isEnded;
-
-        return `<div class="${classes}" ${hoverBorder} onclick="${clickable ? `toggleCell(${i})` : ''}">${text}</div>`;
-    }).join('');
-
-    const markedCount = player.marked.filter(Boolean).length;
-    const total = size * size;
-    document.getElementById('progressFill').style.width = Math.round((markedCount / total) * 100) + '%';
-    document.getElementById('progressText').textContent = `${markedCount} / ${total} משבצות סומנו`;
-
-    renderAchievements(player, game);
+function checkAchievements(){
+    if(!currentGame||!currentPlayer)return;const size=currentGame.size,lines=getCompletedLines(currentPlayer,size);
+    const allMarked=currentPlayer.marked.every(Boolean),prev=[...(currentPlayer.achievements||[])];let ach=null;
+    if(allMarked&&!prev.includes('full')){currentPlayer.achievements.push('full');ach={type:'full',title:'בינגו מלא!',message:'השלמת את כל הלוח!',prize:currentGame.prizes.full}}
+    else if(lines.length>=3&&!prev.includes('three')){currentPlayer.achievements.push('three');ach={type:'three',title:'שלושה קווים!',message:'השלמת שלושה קווים!',prize:currentGame.prizes.threeLines}}
+    else if(lines.length>=2&&!prev.includes('two')){currentPlayer.achievements.push('two');ach={type:'two',title:'שני קווים!',message:'השלמת שני קווים!',prize:currentGame.prizes.twoLines}}
+    else if(lines.length>=1&&!prev.includes('one')){currentPlayer.achievements.push('one');ach={type:'one',title:'קו ראשון!',message:'השלמת שורה, טור או אלכסון!',prize:currentGame.prizes.row}}
+    if(ach){currentGame.players[currentPlayer.id]=currentPlayer;saveGame(currentGame);showWinModal(ach)}
 }
 
-function toggleCell(index) {
-    if (!currentGame || !currentPlayer) return;
-    const wasMarked = currentPlayer.marked[index];
-    currentPlayer.marked[index] = !wasMarked;
-    currentGame.players[currentPlayer.id] = currentPlayer;
-    saveGame(currentGame);
-    localStorage.setItem('bingo_session', JSON.stringify({ gameCode: currentGame.code, playerId: currentPlayer.id, role: 'student' }));
-    if (!wasMarked) checkAchievements();
-    renderBoard();
-}
-
-// ===== ACHIEVEMENTS =====
-function getCompletedLines(player, size) {
-    const lines = [];
-    for (let r = 0; r < size; r++) {
-        const row = []; for (let c = 0; c < size; c++) row.push(r * size + c);
-        if (row.every(i => player.marked[i])) lines.push(row);
-    }
-    for (let c = 0; c < size; c++) {
-        const col = []; for (let r = 0; r < size; r++) col.push(r * size + c);
-        if (col.every(i => player.marked[i])) lines.push(col);
-    }
-    const d1 = [], d2 = [];
-    for (let i = 0; i < size; i++) { d1.push(i * size + i); d2.push(i * size + (size - 1 - i)); }
-    if (d1.every(i => player.marked[i])) lines.push(d1);
-    if (d2.every(i => player.marked[i])) lines.push(d2);
-    return lines;
-}
-
-function checkAchievements() {
-    if (!currentGame || !currentPlayer) return;
-    const size = currentGame.size;
-    const lines = getCompletedLines(currentPlayer, size);
-    const allMarked = currentPlayer.marked.every(Boolean);
-    const prev = [...(currentPlayer.achievements || [])];
-    let ach = null;
-
-    if (allMarked && !prev.includes('full')) {
-        currentPlayer.achievements.push('full');
-        ach = { type: 'full', title: 'בינגו מלא!', message: 'השלמת את כל הלוח!', prize: currentGame.prizes.full };
-    } else if (lines.length >= 3 && !prev.includes('three')) {
-        currentPlayer.achievements.push('three');
-        ach = { type: 'three', title: 'שלושה קווים!', message: 'השלמת שלושה קווים!', prize: currentGame.prizes.threeLines };
-    } else if (lines.length >= 2 && !prev.includes('two')) {
-        currentPlayer.achievements.push('two');
-        ach = { type: 'two', title: 'שני קווים!', message: 'השלמת שני קווים!', prize: currentGame.prizes.twoLines };
-    } else if (lines.length >= 1 && !prev.includes('one')) {
-        currentPlayer.achievements.push('one');
-        ach = { type: 'one', title: 'קו ראשון!', message: 'השלמת שורה, טור או אלכסון!', prize: currentGame.prizes.row };
-    }
-
-    if (ach) {
-        currentGame.players[currentPlayer.id] = currentPlayer;
-        saveGame(currentGame);
-        showWinModal(ach);
-    }
-}
-
-const ACH_SVGS = {
-    one: `<svg viewBox="0 0 48 48" fill="none"><path d="M24 4L29 16H42L32 24L35 36L24 28L13 36L16 24L6 16H19L24 4Z" fill="#CD9B6D" stroke="#8B7355" stroke-width="2" stroke-linejoin="round"/></svg>`,
-    two: `<svg viewBox="0 0 48 48" fill="none"><path d="M24 4L29 16H42L32 24L35 36L24 28L13 36L16 24L6 16H19L24 4Z" fill="#A8B5C5" stroke="#7A8A9A" stroke-width="2" stroke-linejoin="round"/><path d="M24 12L27 20H34L29 25L31 32L24 27L17 32L19 25L14 20H21L24 12Z" fill="white" opacity="0.4"/></svg>`,
-    three: `<svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="22" r="14" fill="#F7C97E" opacity="0.3"/><path d="M24 4L29 16H42L32 24L35 36L24 28L13 36L16 24L6 16H19L24 4Z" fill="#F2A541" stroke="#E8694A" stroke-width="2" stroke-linejoin="round"/></svg>`,
-    full: `<svg viewBox="0 0 48 48" fill="none"><path d="M24 4L34 18L24 42L14 18L24 4Z" fill="#E8694A" opacity="0.3"/><path d="M24 10L30 18L24 36L18 18L24 10Z" fill="#F2A541" stroke="#E8694A" stroke-width="2" stroke-linejoin="round"/><circle cx="24" cy="22" r="4" fill="white" opacity="0.5"/></svg>`
+const ACH_SVGS={
+    one:`<svg viewBox="0 0 48 48" fill="none"><path d="M24 4L29 16H42L32 24L35 36L24 28L13 36L16 24L6 16H19L24 4Z" fill="#CD9B6D" stroke="#8B7355" stroke-width="2" stroke-linejoin="round"/></svg>`,
+    two:`<svg viewBox="0 0 48 48" fill="none"><path d="M24 4L29 16H42L32 24L35 36L24 28L13 36L16 24L6 16H19L24 4Z" fill="#A8B5C5" stroke="#7A8A9A" stroke-width="2" stroke-linejoin="round"/><path d="M24 12L27 20H34L29 25L31 32L24 27L17 32L19 25L14 20H21L24 12Z" fill="white" opacity="0.4"/></svg>`,
+    three:`<svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="22" r="14" fill="#F7C97E" opacity="0.3"/><path d="M24 4L29 16H42L32 24L35 36L24 28L13 36L16 24L6 16H19L24 4Z" fill="#F2A541" stroke="#E8694A" stroke-width="2" stroke-linejoin="round"/></svg>`,
+    full:`<svg viewBox="0 0 48 48" fill="none"><path d="M24 4L34 18L24 42L14 18L24 4Z" fill="#E8694A" opacity="0.3"/><path d="M24 10L30 18L24 36L18 18L24 10Z" fill="#F2A541" stroke="#E8694A" stroke-width="2" stroke-linejoin="round"/><circle cx="24" cy="22" r="4" fill="white" opacity="0.5"/></svg>`
 };
 
-function renderAchievements(player, game) {
-    const bar = document.getElementById('achievementsBar');
-    const achs = player.achievements || [];
-    const items = [
-        { id: 'one', label: 'קו ראשון', prize: game.prizes.row },
-        { id: 'two', label: 'שני קווים', prize: game.prizes.twoLines },
-        { id: 'three', label: 'שלושה קווים', prize: game.prizes.threeLines },
-        { id: 'full', label: 'בינגו מלא!', prize: game.prizes.full },
-    ];
-    bar.innerHTML = items.map(a => `
-        <div class="achievement ${achs.includes(a.id) ? 'unlocked' : ''}" title="${a.prize}">
-            <div class="ach-svg">${ACH_SVGS[a.id]}</div>
-            <span>${a.label}</span>
-        </div>
-    `).join('');
+function renderAchievements(player,game){
+    const bar=document.getElementById('achievementsBar'),achs=player.achievements||[];
+    const items=[{id:'one',label:'קו ראשון'},{id:'two',label:'שני קווים'},{id:'three',label:'שלושה קווים'},{id:'full',label:'בינגו מלא!'}];
+    bar.innerHTML=items.map(a=>`<div class="achievement ${achs.includes(a.id)?'unlocked':''}" title="${game.prizes[a.id==='one'?'row':a.id==='two'?'twoLines':a.id==='three'?'threeLines':'full']}"><div class="ach-svg">${ACH_SVGS[a.id]}</div><span>${a.label}</span></div>`).join('');
 }
 
-// ===== WIN MODAL =====
-const TROPHY_SVGS = {
-    one: `<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" fill="#FDF6EC"/><path d="M50 15L60 38H85L66 52L73 75L50 62L27 75L34 52L15 38H40L50 15Z" fill="#CD9B6D" stroke="#8B7355" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
-    two: `<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" fill="#FDF6EC"/><path d="M50 15L60 38H85L66 52L73 75L50 62L27 75L34 52L15 38H40L50 15Z" fill="#A8B5C5" stroke="#7A8A9A" stroke-width="2.5" stroke-linejoin="round"/><path d="M50 25L56 40H68L59 48L62 62L50 54L38 62L41 48L32 40H44L50 25Z" fill="white" opacity="0.4"/></svg>`,
-    three: `<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" fill="#FDF6EC"/><circle cx="50" cy="48" r="25" fill="#F7C97E" opacity="0.3"/><path d="M50 15L60 38H85L66 52L73 75L50 62L27 75L34 52L15 38H40L50 15Z" fill="#F2A541" stroke="#E8694A" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
-    full: `<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" fill="#FDF6EC"/><path d="M50 8L72 40L50 92L28 40L50 8Z" fill="#E8694A" opacity="0.15"/><path d="M50 18L66 42L50 80L34 42L50 18Z" fill="#F2A541" stroke="#E8694A" stroke-width="2.5" stroke-linejoin="round"/><circle cx="50" cy="45" r="8" fill="white" opacity="0.4"/><path d="M42 45Q50 55 58 45" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.5"/></svg>`
+const TROPHY_SVGS={
+    one:`<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" fill="#FDF6EC"/><path d="M50 15L60 38H85L66 52L73 75L50 62L27 75L34 52L15 38H40L50 15Z" fill="#CD9B6D" stroke="#8B7355" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
+    two:`<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" fill="#FDF6EC"/><path d="M50 15L60 38H85L66 52L73 75L50 62L27 75L34 52L15 38H40L50 15Z" fill="#A8B5C5" stroke="#7A8A9A" stroke-width="2.5" stroke-linejoin="round"/><path d="M50 25L56 40H68L59 48L62 62L50 54L38 62L41 48L32 40H44L50 25Z" fill="white" opacity="0.4"/></svg>`,
+    three:`<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" fill="#FDF6EC"/><circle cx="50" cy="48" r="25" fill="#F7C97E" opacity="0.3"/><path d="M50 15L60 38H85L66 52L73 75L50 62L27 75L34 52L15 38H40L50 15Z" fill="#F2A541" stroke="#E8694A" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
+    full:`<svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="45" fill="#FDF6EC"/><path d="M50 8L72 40L50 92L28 40L50 8Z" fill="#E8694A" opacity="0.15"/><path d="M50 18L66 42L50 80L34 42L50 18Z" fill="#F2A541" stroke="#E8694A" stroke-width="2.5" stroke-linejoin="round"/><circle cx="50" cy="45" r="8" fill="white" opacity="0.4"/></svg>`
 };
 
-function showWinModal(ach) {
-    document.getElementById('modalTrophy').innerHTML = TROPHY_SVGS[ach.type] || TROPHY_SVGS.one;
-    document.getElementById('modalTitle').textContent = ach.title;
-    document.getElementById('modalMessage').textContent = ach.message;
-    document.getElementById('modalPrize').textContent = 'הפרס: ' + ach.prize;
-    document.getElementById('winModal').classList.add('show');
-    launchConfetti();
+function showWinModal(ach){
+    document.getElementById('modalTrophy').innerHTML=TROPHY_SVGS[ach.type]||TROPHY_SVGS.one;
+    document.getElementById('modalTitle').textContent=ach.title;document.getElementById('modalMessage').textContent=ach.message;
+    document.getElementById('modalPrize').textContent='הפרס: '+ach.prize;document.getElementById('winModal').classList.add('show');launchConfetti();
 }
+function closeModal(){document.getElementById('winModal').classList.remove('show')}
 
-function closeModal() { document.getElementById('winModal').classList.remove('show'); }
-
-// ===== CONFETTI =====
-function launchConfetti() {
-    const container = document.getElementById('confettiContainer');
-    const shapes = ['circle', 'rect', 'star'];
-    const colors = ['#F2A541','#E8694A','#3AAFA9','#A8C5A0','#C3AED6','#E8A0BF','#87CEEB','#F7C97E'];
-
-    for (let i = 0; i < 50; i++) {
-        const el = document.createElement('div');
-        el.className = 'confetti-piece';
-        const size = Math.random() * 10 + 8;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const shape = shapes[Math.floor(Math.random() * shapes.length)];
-
-        let svgContent;
-        if (shape === 'circle') {
-            svgContent = `<circle cx="${size/2}" cy="${size/2}" r="${size/2}" fill="${color}"/>`;
-        } else if (shape === 'rect') {
-            svgContent = `<rect width="${size}" height="${size*0.6}" rx="2" fill="${color}" transform="rotate(${Math.random()*45})"/>`;
-        } else {
-            svgContent = `<path d="M${size/2} 0L${size*0.6} ${size*0.4}H${size}L${size*0.7} ${size*0.6}L${size*0.8} ${size}L${size/2} ${size*0.75}L${size*0.2} ${size}L${size*0.3} ${size*0.6}L0 ${size*0.4}H${size*0.4}Z" fill="${color}"/>`;
-        }
-
-        el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${svgContent}</svg>`;
-        el.style.left = Math.random() * 100 + '%';
-        el.style.animationDuration = (Math.random() * 2.5 + 2) + 's';
-        el.style.animationDelay = (Math.random() * 1.5) + 's';
-        el.style.opacity = Math.random() * 0.5 + 0.5;
-        container.appendChild(el);
+function launchConfetti(){
+    const container=document.getElementById('confettiContainer'),colors=['#F2A541','#E8694A','#3AAFA9','#A8C5A0','#C3AED6','#E8A0BF','#87CEEB','#F7C97E'];
+    const shapes=['circle','rect','star'];
+    for(let i=0;i<50;i++){
+        const el=document.createElement('div');el.className='confetti-piece';const size=Math.random()*10+8;
+        const color=colors[Math.floor(Math.random()*colors.length)],shape=shapes[Math.floor(Math.random()*shapes.length)];
+        let sv;if(shape==='circle')sv=`<circle cx="${size/2}" cy="${size/2}" r="${size/2}" fill="${color}"/>`;
+        else if(shape==='rect')sv=`<rect width="${size}" height="${size*.6}" rx="2" fill="${color}" transform="rotate(${Math.random()*45})"/>`;
+        else sv=`<path d="M${size/2} 0L${size*.6} ${size*.4}H${size}L${size*.7} ${size*.6}L${size*.8} ${size}L${size/2} ${size*.75}L${size*.2} ${size}L${size*.3} ${size*.6}L0 ${size*.4}H${size*.4}Z" fill="${color}"/>`;
+        el.innerHTML=`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${sv}</svg>`;
+        el.style.left=Math.random()*100+'%';el.style.animationDuration=(Math.random()*2.5+2)+'s';
+        el.style.animationDelay=(Math.random()*1.5)+'s';el.style.opacity=Math.random()*.5+.5;container.appendChild(el);
     }
-    setTimeout(() => container.innerHTML = '', 5500);
+    setTimeout(()=>container.innerHTML='',5500);
 }
 
-// ===== LOAD EXISTING GAME =====
-function loadExistingGame() {
-    const session = JSON.parse(localStorage.getItem('bingo_session') || 'null');
-    if (!session) { showToast('לא נמצא משחק שמור'); return; }
-    const game = getGameByCode(session.gameCode);
-    if (!game) { showToast('המשחק לא נמצא'); localStorage.removeItem('bingo_session'); return; }
-    currentGame = game;
-    if (session.role === 'teacher') { showTeacherDashboard(); return; }
-    const player = game.players[session.playerId];
-    if (!player) { showToast('השחקן לא נמצא'); localStorage.removeItem('bingo_session'); return; }
-    currentPlayer = { ...player, id: session.playerId };
-    renderBoard();
-    showScreen('bingoBoard');
-    showToast(`ברוך שובך, ${player.name}!`);
+function loadExistingGame(){
+    const session=JSON.parse(localStorage.getItem('bingo_session')||'null');
+    if(!session){showToast('לא נמצא משחק שמור');return}
+    const game=getGameByCode(session.gameCode);if(!game){showToast('המשחק לא נמצא');localStorage.removeItem('bingo_session');return}
+    currentGame=game;if(session.role==='teacher'){showTeacherDashboard();return}
+    const player=game.players[session.playerId];if(!player){showToast('השחקן לא נמצא');localStorage.removeItem('bingo_session');return}
+    currentPlayer={...player,id:session.playerId};renderBoard();showScreen('bingoBoard');showToast(`ברוך שובך, ${player.name}!`);
 }
 
-// ===== STORAGE =====
-function saveGame(game) {
-    const games = JSON.parse(localStorage.getItem('bingo_games') || '{}');
-    games[game.code] = game;
-    localStorage.setItem('bingo_games', JSON.stringify(games));
-}
+function saveGame(game){const g=JSON.parse(localStorage.getItem('bingo_games')||'{}');g[game.code]=game;localStorage.setItem('bingo_games',JSON.stringify(g))}
+function getGameByCode(code){return(JSON.parse(localStorage.getItem('bingo_games')||'{}'))[code]||null}
 
-function getGameByCode(code) {
-    const games = JSON.parse(localStorage.getItem('bingo_games') || '{}');
-    return games[code] || null;
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
 
-// ===== TOAST =====
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-}
+document.getElementById('boardSize').addEventListener('change',renderStatements);
+document.getElementById('freeCenter').addEventListener('change',renderStatements);
 
-// ===== LISTENERS =====
-document.getElementById('boardSize').addEventListener('change', renderStatements);
-document.getElementById('freeCenter').addEventListener('change', renderStatements);
-
-// ===== START =====
 init();
 </script>
 </body>
