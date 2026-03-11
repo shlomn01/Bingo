@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFF8F0"/>
+      <stop offset="100%" stop-color="#F5EDE0"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#F2A541"/>
+      <stop offset="100%" stop-color="#E8694A"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Decorative circles -->
+  <circle cx="100" cy="100" r="180" fill="#3AAFA9" opacity="0.08"/>
+  <circle cx="1100" cy="530" r="200" fill="#E8694A" opacity="0.08"/>
+  <circle cx="900" cy="80" r="120" fill="#A8C5A0" opacity="0.1"/>
+  <!-- Bingo card -->
+  <g transform="translate(360, 140)">
+    <rect width="480" height="380" rx="20" fill="white" stroke="#E8694A" stroke-width="3" opacity="0.9"/>
+    <!-- Header -->
+    <rect width="480" height="70" rx="20" fill="url(#card)"/>
+    <rect y="50" width="480" height="20" fill="url(#card)"/>
+    <text x="240" y="50" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="48" fill="white" letter-spacing="20">BINGO</text>
+    <!-- Grid -->
+    <g stroke="#E8694A" stroke-width="1" opacity="0.3">
+      <line x1="96" y1="70" x2="96" y2="380"/>
+      <line x1="192" y1="70" x2="192" y2="380"/>
+      <line x1="288" y1="70" x2="288" y2="380"/>
+      <line x1="384" y1="70" x2="384" y2="380"/>
+      <line x1="0" y1="132" x2="480" y2="132"/>
+      <line x1="0" y1="194" x2="480" y2="194"/>
+      <line x1="0" y1="256" x2="480" y2="256"/>
+      <line x1="0" y1="318" x2="480" y2="318"/>
+    </g>
+    <!-- Dauber marks -->
+    <circle cx="48" cy="101" r="22" fill="#3AAFA9" opacity="0.7"/>
+    <circle cx="240" cy="225" r="22" fill="#E8694A" opacity="0.7"/>
+    <circle cx="432" cy="101" r="22" fill="#F2A541" opacity="0.7"/>
+    <circle cx="144" cy="287" r="22" fill="#C3AED6" opacity="0.7"/>
+    <circle cx="336" cy="349" r="22" fill="#A8C5A0" opacity="0.7"/>
+    <circle cx="48" cy="349" r="22" fill="#F2A541" opacity="0.7"/>
+    <circle cx="432" cy="287" r="22" fill="#3AAFA9" opacity="0.7"/>
+    <!-- Star center -->
+    <text x="240" y="234" text-anchor="middle" font-size="28" fill="white">★</text>
+  </g>
+  <!-- Title text -->
+  <text x="600" y="580" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="36" fill="#3D3229" opacity="0.8">בינגו כיתתי 🎯</text>
+</svg>
